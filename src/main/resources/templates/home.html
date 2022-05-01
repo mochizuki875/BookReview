@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Book Review</title>
+</head>
+<body>
+	<a href="#" th:href="@{/}">Book Review</a>
+	<center><h1>良い本に出会いましょう！</h1></center>
+	<!-- ▽▽▽ 書籍情報が1件でもあれば表示 ▽▽▽ -->		
+	<!-- BookReviewControllerにてModelに格納したlistをユーティリティーオブジェクトを使ってチェックしている -->
+	<table align="center" border="1" th:unless="${#lists.isEmpty(bookList)}" style="table-layout: fixed;">
+		<tr>
+			<th>書籍名</th>
+			<th>評価</th>
+			<th>RV登録</th>
+			<th>詳細</th>
+		</tr>
+		<tr th:each="obj : ${bookList}" align="center">
+			<td th:text="${obj.title}"></td>
+			<td th:text="${obj.totalevaluation}" align="left"></td>
+			<!-- RV登録ボタン -->
+			<td>
+				<form method="GET" th:action="@{/book/{id}(id=${obj.id})}"> <!-- {id}に(id=)を代入 -->
+					<input type="submit" value="RV登録">
+				</form>
+			</td>
+			<!-- 詳細ボタン -->
+			<td>
+				<form method="GET" th:action="@{/book/detail}">
+					<input type="hidden" name="id" th:value="${obj.id}">
+					<input type="submit" value="詳細">
+				</form>
+			</td>
+		</tr>
+	</table>
+	<!-- △△△ 書籍情報が1件でもあれば表示 △△△ -->
+	
+	<!-- ▽▽▽ 書籍情報が1件もない場合表示 ▽▽▽ -->
+	<p th:if="${#lists.isEmpty(bookList)}">登録されている書籍はありません</p>
+	<!-- △△△ 書籍情報が1件もない場合表示 △△△ -->
+</body>
+</html>
