@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<!-- ヘッダ -->
+<a href="#" th:href="@{/}">Book Review</a>
+
+<!-- CSSスタイルシートの読み込み -->
+<link th:href="@{/css/style.css}" rel="stylesheet">
+
+<title th:text="${book.title}">Book Detail</title>
+</head>
+<body>
+	<h1 align="center" th:text="${book.title}">本のタイトル</h1>
+	<!-- 本の画像表示（一旦ダミー） -->
+	<center><img width=300px height=300px th:src="@{/images/default.png}"></center>
+	<!-- 本の詳細表示（本の情報を表示できなければエラーにしたい） -->
+	<table align="center" border="1" style="table-layout: fixed;">
+		<tr>
+			<th>概要</th>
+			<th>評価</th>
+		</tr>
+		<tr>
+			<td th:text="${book.overview}"></td>
+			<td th:text="${book.totalevaluation}"></td>
+		</tr>
+	</table>
+</body>
+</html>

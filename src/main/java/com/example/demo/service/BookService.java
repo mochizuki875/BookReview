@@ -10,5 +10,7 @@ public interface BookService {
 	Iterable<Book> selectAll();
 	// Bookを1件取得
 	Optional<Book> selectOneById(Integer id);
+	// Bookを1件登録
+	void insertBook(Book book);
 
 }

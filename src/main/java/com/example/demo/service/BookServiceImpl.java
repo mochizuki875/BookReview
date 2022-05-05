@@ -25,5 +25,11 @@ public class BookServiceImpl implements BookService {
 	public Optional<Book> selectOneById(Integer id) {
 		return repository.findById(id);
 	}
+	
+	@Override
+	public void insertBook(Book book) {
+		book.setTotalevaluation(0.0); // 算定で本の評価は0とする
+		repository.save(book);
+	}
 
 }
