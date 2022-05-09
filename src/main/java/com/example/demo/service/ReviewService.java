@@ -16,8 +16,8 @@ public interface ReviewService {
 	void insertReview(Review review);
 	
 	// 本のIDを指定してRVを全件取得
-	// Iterable<Review> selectAllByBookId(Iterable<Integer> ids);
+	 Iterable<Review> selectAllByBookId(Integer bookid);
 			
 	// 本のIDを指定してRVを全件削除（本のIDに紐付くもの全て）
-	// void deleteAllByBookId(Integer id);
+	 void deleteAllByBookId(Integer bookid);
 }

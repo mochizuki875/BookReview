@@ -31,19 +31,14 @@ public class BookReviewApplication {
 	
 	// テスト用実行メソッド
 	private void execute() {
-		// 本を全件取得
-		// showList();
-
-		// 本を1件取得
-		// showOne();
+		// showList(); // 本を全件取得
+		// showOne(); // 本を1件取得
 		
-		// RVを1件取得
-		showOneReview();
-		
-		// RVを1件削除
-		deleteOneReview();
-		
-		insertOneReview();
+		showOneReview(); // RVを1件取得
+		deleteOneReview(); // RVを1件削除
+		insertOneReview(); // RVを1件追加
+		showReview(); // 特定の本のRVを取得
+		deleteAllReview(); // 特定の本に関連するRVを全て削除
 	}
 	
 	// 全件取得メソッド
@@ -71,7 +66,7 @@ public class BookReviewApplication {
 	// RVを1件取得
 	private void showOneReview() {
 		System.out.println("--- RV1件取得開始 ---");
-		Optional<Review> reviewOpt = reviewService.selectOneById(12);
+		Optional<Review> reviewOpt = reviewService.selectOneById(13);
 		if(reviewOpt.isPresent()) {
 			System.out.println(reviewOpt.get());
 		} else {
@@ -83,24 +78,36 @@ public class BookReviewApplication {
 	// RVを1件削除
 	private void deleteOneReview() {
 		System.out.println("--- 1件削除開始 ---");
-		reviewService.deleteOneById(12);
+		reviewService.deleteOneById(13);
 		System.out.println("--- 1件削除完了 ---");
 	}
 	
-	// RVを1件登録するメソッド
+	// RVを1件登録
 	private void insertOneReview() {
 		System.out.println("--- 1件登録開始 ---");
-		
 		Review review = new Review();
-		
 		review.setEvaluation(5);
 		review.setReview("テスト用RV登録");
 		review.setBookid(4);
 		review.setUserid(0);
-
-
-		reviewService.insertReview(review);
-		
+		reviewService.insertReview(review);		
 		System.out.println("--- 1件登録完了 ---");
+	}
+	
+	// 特定の本のRVを取得
+	private void showReview() {
+		System.out.println("--- RV取得開始 ---");
+		Iterable<Review> reviews = reviewService.selectAllByBookId(4);
+		for(Review review : reviews) {
+			System.out.println(review);
+		}
+		System.out.println("--- RV取得完了 ---");
+	}
+	
+	// 特定の本に関連するRVを全て削除
+	private void deleteAllReview() {
+		System.out.println("--- RV削除開始 ---");
+		reviewService.deleteAllByBookId(4);
+		System.out.println("--- RV削除完了 ---");
 	}
 }

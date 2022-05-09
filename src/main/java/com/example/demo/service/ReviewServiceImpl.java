@@ -35,17 +35,15 @@ public class ReviewServiceImpl implements ReviewService {
 	}
 	
 	// 本のIDを指定してRVを全件取得
-//	@Override
-//	public Iterable<Review> selectAllByBookId(Iterable<Integer> ids){
-//		// SQLの独自定義が必要？
-//		Iterable<Review> review = (Iterable<Review>) new Review(); //ダミー
-//	    return review;
-//	}
+	@Override
+	public Iterable<Review> selectAllByBookId(Integer bookid){
+	    return reviewRepository.findAllByBookid(bookid);
+	}
 	
 	// 本のIDを指定してRVを全件削除（本のIDに紐付くもの全て）
-//	@Override
-//	public void deleteAllByBookId(Integer id) {
-//		// SQLの独自定義が必要？
-//	}
+	@Override
+	public void deleteAllByBookId(Integer bookid) {
+		reviewRepository.deleteAllByBookid(bookid);
+	}
 	
 }
