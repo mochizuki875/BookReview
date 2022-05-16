@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.demo.entity.Book;
+import com.example.demo.entity.Review;
 import com.example.demo.service.BookService;
+import com.example.demo.service.ReviewService;
 
 @Controller
 @RequestMapping
@@ -21,11 +23,13 @@ public class BookReviewController {
 	// Serviceインスタンスの作成
 	@Autowired
 	BookService bookService;
+	@Autowired
+	ReviewService reviewService;
 	
 	// ホーム画面を表示
 	@GetMapping("/")
 	public String showHome(Model model) {
-		Iterable<Book> bookList = bookService.selectAll(); // Book情報を全件取得
+		Iterable<Book> bookList = bookService.selectAll(); // Book情報を全件取得		
 		model.addAttribute("bookList", bookList); // Modelに格納
 		return "home";
 	}
@@ -60,4 +64,28 @@ public class BookReviewController {
 		return "redirect:/";
 	}
 
+	// RVの新規登録画面
+	@GetMapping("/book/{id}/newReview")
+	public String newReview(@PathVariable Integer id, Model model) { // リクエストパラメーターでbookid欲しい
+		model.addAttribute("bookid", id);
+		Optional<Book> bookOpt = bookService.selectOneById(id);
+		if(bookOpt.isPresent()) {
+			model.addAttribute("book", bookOpt.get());
+		}
+		return "newreview";
+	}
+	
+	// RVの新規登録
+	@PostMapping("/review/insert")
+	public String insertReview(@RequestParam Integer evaluation, @RequestParam String content, @RequestParam Integer bookid, @RequestParam(defaultValue = "0") Integer userid) {
+		Review review = new Review();
+		review.setEvaluation(evaluation);
+		review.setContent(content);
+		review.setBookid(bookid);
+		review.setUserid(userid);
+		reviewService.insertReview(review);
+		return "redirect:/book/detail/" + bookid;
+	}
+	
+	
 }

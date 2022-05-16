@@ -34,13 +34,13 @@
 			<td th:text="${obj.totalevaluation}" align="left"></td>
 			<!-- RV登録ボタン -->
 			<td>
-				<form method="GET" th:action="@{/book/{id}(id=${obj.id})}"> <!-- {id}に(id=)を代入 -->
+				<form method="GET" th:action="@{/book/{id}/newReview(id=${obj.id})}"> <!-- {id}に(id=)を代入 -->
 					<input type="submit" value="RV登録">
 				</form>
 			</td>
 			<!-- 詳細ボタン -->
 			<td>
-				<form method="GET" th:action="@{/book/detail/{id}(id=${obj.id})}">
+				<form method="GET" th:action="@{/book/detail/{id}(id=${obj.id})}"> <!-- {id}に(id=)を代入 -->
 					<input type="submit" value="詳細">
 				</form>
 			</td>

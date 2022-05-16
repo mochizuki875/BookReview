@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<!-- ヘッダ -->
+<a href="#" th:href="@{/}">Book Review</a>
+
+<!-- CSSスタイルシートの読み込み -->
+<link th:href="@{/css/style.css}" rel="stylesheet">
+
+<title>New Review</title>
+</head>
+<body>
+	<h1 align="center">本のレビューを登録しましょう！</h1>
+	<h2 th:text="${book.title}">本のタイトル</h2>
+	<form method="POST" th:action="@{/review/insert}">
+		<div>
+			<label for="evaluation">評価</label><br>
+			<input type="number" name="evaluation" min="1" max="5" value="3">
+		</div>
+		<div>
+			<label for="content">レビュー</label><br>
+			<textarea rows="5" cols="50" name="content"></textarea><br>
+		</div>
+		<div>
+			<!-- 隠しフィールドとしてbookidを渡す -->
+			<input type="hidden" name="bookid" th:value="${bookid}">
+		</div>
+		<input type="submit" value="登録">
+	</form>
+</body>
+</html>

@@ -17,8 +17,8 @@ import com.example.demo.service.ReviewService;
 public class BookReviewApplication {
 
 	public static void main(String[] args) {
-//		SpringApplication.run(BookReviewApplication.class, args);
-		SpringApplication.run(BookReviewApplication.class, args).getBean(BookReviewApplication.class).execute(); // テスト用メソッド実行
+		SpringApplication.run(BookReviewApplication.class, args);
+//		SpringApplication.run(BookReviewApplication.class, args).getBean(BookReviewApplication.class).execute(); // テスト用メソッド実行
 	}
 	
 	// ----------------------------------------------------- 
@@ -87,7 +87,7 @@ public class BookReviewApplication {
 		System.out.println("--- 1件登録開始 ---");
 		Review review = new Review();
 		review.setEvaluation(5);
-		review.setReview("テスト用RV登録");
+		review.setContent("テスト用RV登録");
 		review.setBookid(4);
 		review.setUserid(0);
 		reviewService.insertReview(review);		
