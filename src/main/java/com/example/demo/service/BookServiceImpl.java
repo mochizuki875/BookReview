@@ -28,8 +28,18 @@ public class BookServiceImpl implements BookService {
 	
 	@Override
 	public void insertBook(Book book) {
-		book.setTotalevaluation(0.0); // 算定で本の評価は0とする
+		book.setTotalevaluation(0.0); // 暫定で本の評価は0とする
 		repository.save(book);
+	}
+	
+	@Override
+	public void updateTotalevaluationById(Integer id, Double totalevaluation) {
+		repository.updateTotalevaluationById(id, totalevaluation);
+	}
+	
+	@Override
+	public void deleteBookById(Integer id) {
+		repository.deleteById(id);
 	}
 
 }

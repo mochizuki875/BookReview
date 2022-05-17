@@ -12,18 +12,43 @@
 </head>
 <body>
 	<h1 align="center" th:text="${book.title}">本のタイトル</h1>
+	<p th:if="${complete}" th:text="${complete}" style="color:blue"></p>
+	
 	<!-- 本の画像表示（一旦ダミー） -->
 	<center><img width=300px height=300px th:src="@{/images/default.png}"></center>
 	<!-- 本の詳細表示（本の情報を表示できなければエラーにしたい） -->
 	<table align="center" border="1" style="table-layout: fixed;">
 		<tr>
-			<th>概要</th>
-			<th>評価</th>
+			<th width="700">概要</th>
+			<th width="150">評価</th>
 		</tr>
 		<tr>
-			<td th:text="${book.overview}"></td>
-			<td th:text="${book.totalevaluation}"></td>
+			<td th:text="${book.overview}">概要</td>
+			<td th:text="${book.totalevaluation}" align="center">評価</td>
 		</tr>
 	</table>
+	<br>
+	<h2 align="center">この本を読んだ人からのレビュー</h2>
+	<table align="center" border="1" th:unless="${#lists.isEmpty(reviewList)}" style="table-layout: fixed;">
+		<tr>
+			<th width="700">レビュー</th>
+			<th width="150">評価</th>
+		</tr>
+		<tr th:each="obj : ${reviewList}">
+			<td th:text="${obj.content}">レビュー内容</td>
+			<td th:text="${obj.evaluation}" align="center">評価</td>
+			<!-- RV削除ボタン -->
+			<td>
+				<form method="POST" th:action="@{/book/detail/{bookid}/delete/{reviewid}(bookid=${obj.bookid}, reviewid=${obj.id})}"> <!-- {id}に(id=)を代入 -->
+					<input type="hidden" name="_method" value="DELETE"> <!-- DELETEメソッドを隠しフィールドで送る -->
+					<input type="submit" value="RV削除">
+				</form>
+			</td>
+		</tr>
+	
+	</table>
+	<!-- レビューが取得できなければメッセージを表示 -->
+	<p th:if="${#lists.isEmpty(reviewList)}">まだ登録されているレビューはありません</p>
+	
 </body>
 </html>

@@ -38,10 +38,17 @@ public class BookReviewController {
 	// 書籍IDをリクエストパラメータとして受け取って本の詳細ページを返す
 	@GetMapping("/book/detail/{id}")
 	public String showBook(@PathVariable Integer id, Model model) {
+		
+		// 本の情報を取得
 		Optional<Book> bookOpt = bookService.selectOneById(id);
 		if(bookOpt.isPresent()) {
 			model.addAttribute("book", bookOpt.get());
 		}
+		
+		// 本のRVを取得
+		Iterable<Review> reviewList = reviewService.selectAllByBookId(id);
+		model.addAttribute(reviewList);
+		
 		return "detail";
 	}
 	
@@ -59,8 +66,19 @@ public class BookReviewController {
 		book.setTitle(title);
 		book.setOverview(overview);
 		bookService.insertBook(book);
-		redirectAttributes.addFlashAttribute("complete", "登録が完了しました"); // リダイレクト時のパラメータを設定する（登録完了メッセージ）
+		redirectAttributes.addFlashAttribute("complete", "登録が完了しました！"); // リダイレクト時のパラメータを設定する（登録完了メッセージ）
 	
+		return "redirect:/";
+	}
+	
+	// 本の削除
+	@PostMapping("/book/delete/{bookid}")
+	public String deleteReview(@PathVariable Integer bookid, RedirectAttributes redirectAttributes) {
+		
+		reviewService.deleteAllByBookId(bookid); // Bookに紐付くreviewを全件削除
+		bookService.deleteBookById(bookid); // Bookを削除
+		
+		redirectAttributes.addFlashAttribute("complete", "対象の本の削除が完了しました。"); // リダイレクト時のパラメータを設定する（登録完了メッセージ）
 		return "redirect:/";
 	}
 
@@ -77,15 +95,42 @@ public class BookReviewController {
 	
 	// RVの新規登録
 	@PostMapping("/review/insert")
-	public String insertReview(@RequestParam Integer evaluation, @RequestParam String content, @RequestParam Integer bookid, @RequestParam(defaultValue = "0") Integer userid) {
+	public String insertReview(@RequestParam Integer evaluation, @RequestParam String content, @RequestParam Integer bookid, @RequestParam(defaultValue = "0") Integer userid, RedirectAttributes redirectAttributes) {
 		Review review = new Review();
 		review.setEvaluation(evaluation);
 		review.setContent(content);
 		review.setBookid(bookid);
 		review.setUserid(userid);
 		reviewService.insertReview(review);
+		
+		// RV対象のReviewを全て取得
+		Iterable<Review> reviewList = reviewService.selectAllByBookId(bookid);
+		
+		// 取得したReviewのevaluationの平均値を算出
+		Double totalEvaluation = 0.0;
+		Integer counter = 0;
+		for(Review tempReview : reviewList) {
+			totalEvaluation += tempReview.getEvaluation();
+			counter ++;
+		}
+		
+		// bookテーブルのtotalevaluationを更新
+		bookService.updateTotalevaluationById(bookid, (double)Math.round(totalEvaluation*10/counter)/10);
+		
+		redirectAttributes.addFlashAttribute("complete", "レビューの登録が完了しました！"); // リダイレクト時のパラメータを設定する（登録完了メッセージ）
+		
 		return "redirect:/book/detail/" + bookid;
 	}
 	
+	// RVの削除
+	@PostMapping("/book/detail/{bookid}/delete/{reviewid}")
+	public String deleteReview(@PathVariable Integer bookid, @PathVariable Integer reviewid, RedirectAttributes redirectAttributes) {
+		
+		// Reviewを削除
+		reviewService.deleteOneById(reviewid);
+		
+		redirectAttributes.addFlashAttribute("complete", "対象レビューの削除が完了しました。"); // リダイレクト時のパラメータを設定する（登録完了メッセージ）
+		return "redirect:/book/detail/" + bookid;
+	}
 	
 }
