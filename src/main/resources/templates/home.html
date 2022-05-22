@@ -1,62 +1,90 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-<meta charset="UTF-8">
-<!-- ヘッダ -->
-<a href="#" th:href="@{/}">Book Review</a>
-
-<!-- CSSスタイルシートの読み込み -->
-<link th:href="@{/css/style.css}" rel="stylesheet">
-
-<title>Book Review</title>
+<head th:replace="common/head :: head_fragment">
 </head>
+
 <body>
-	<center><h1>良い本に出会いましょう！</h1></center>
-	
-	<!-- 登録/更新完了コメント -->
-	<!-- ${complete}はinsertメソッドからRedirectパラメーターとして渡される -->
-	<p th:if="${complete}" th:text="${complete}" style="color:blue"></p>
-	
-	<!-- 書籍情報の新規登録 -->
-	<center><h3><a th:href="@{/book/newbook}">新しい本を登録する</a></h3></center>
+	<!-- navbar -->
+	<nav th:replace="common/navbar :: nav_fragment">
+	</nav>
+
+
+	<div class="p-3 p-sm-5 mb-4 bg-img">
+
+		
+		<!-- 検索ウインドウ -->
+		<div class="container-fluid p-5">
+			<div class="row justify-content-center">
+				<div class="col-md-5">
+					<form method="GET" class="d-flex" th:action="@{/book/search}">
+						<input class="form-control me-2 text-center" type="search" name="keyword" placeholder="Search Book..." aria-label="Search" th:value=${keyword}>
+						<button class="btn btn-success" type="submit" th:name="user" th:value="${user}">Search</button>
+					</form>
+				</div>
+			</div>
+		</div>
+		
+		<!-- 登録/更新完了コメント -->
+		<!-- ${complete}はinsertメソッドからRedirectパラメーターとして渡される -->
+		<p th:if="${complete}" th:text="${complete}" style="color:blue"></p>
+		
+		<!-- 書籍情報の新規登録 -->		
+		<form method="GET" th:action="@{/book/newbook(user=${user})}"> <!-- {id}に(id=)を代入 -->
+			<button type="submit" th:name="user" th:value="${user}" class="btn btn-primary">新しい本を登録する</button> <!-- リクエストパラメータとしてuserを送る -->
+		</form>
+		
+	</div>
+
 	
 	<!-- ▽▽▽ 書籍情報が1件でもあれば表示 ▽▽▽ -->		
 	<!-- BookReviewControllerにてModelに格納したlistをユーティリティーオブジェクトを使ってチェックしている -->
-	<table align="center" border="1" th:unless="${#lists.isEmpty(bookList)}" style="table-layout: fixed;">
-		<tr>
-			<th width="700">書籍名</th>
-			<th width="150">評価</th>
-<!-- 			<th>RV登録</th>
-			<th>詳細</th> -->
-		</tr>
-		<tr th:each="obj : ${bookList}">
-			<td th:text="${obj.title}" align="left"></td>
-			<td th:text="${obj.totalevaluation}" align="center"></td>
-			<!-- RV登録ボタン -->
-			<td>
-				<form method="GET" th:action="@{/book/{id}/newReview(id=${obj.id})}"> <!-- {id}に(id=)を代入 -->
-					<input type="submit" value="RV登録">
-				</form>
-			</td>
-			<!-- 詳細ボタン -->
-			<td>
-				<form method="GET" th:action="@{/book/detail/{id}(id=${obj.id})}"> <!-- {id}に(id=)を代入 -->
-					<input type="submit" value="詳細">
-				</form>
-			</td>
-			<!-- 削除ボタン -->
-			<td>
-				<form method="POST" th:action="@{/book/delete/{id}(id=${obj.id})}"> <!-- {id}に(id=)を代入 -->
-					<input type="hidden" name="_method" value="DELETE"> <!-- DELETEメソッドを隠しフィールドで送る -->
-					<input type="submit" value="削除">
-				</form>
-			</td>
-		</tr>
-	</table>
+	<div class="container-fluid pt-5">
+		<table class="table table-bordered table-striped table-hover table-responsive" th:unless="${#lists.isEmpty(bookList)}">
+			<thead>
+				<tr class="text-center table-primary">
+					<th scope="col">書籍名</th>
+					<th scope="col">評価</th>
+					<th scope="rol" colspan="3">各種操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="obj : ${bookList}">
+					<td th:text="${obj.title}" align="left"></td>
+					<td th:text="${obj.totalevaluation}" align="center"></td>
+					<!-- RV登録ボタン -->
+					<td class="text-center">
+						<form method="GET"
+							th:action="@{/book/{id}/newReview(id=${obj.id})}">
+							<!-- {id}に(id=)を代入 -->
+							<button type="submit" th:name="user" th:value="${user}" class="btn btn-primary">RV登録</button>
+						</form>
+					</td>
+					<!-- 詳細ボタン -->
+					<td class="text-center">
+						<form method="GET" th:action="@{/book/detail/{id}(id=${obj.id})}"> <!-- {id}に(id=)を代入 -->
+							<button type="submit" th:name="user" th:value="${user}" class="btn btn-primary">詳細</button> <!-- リクエストパラメータとしてuserを送る -->
+						</form>
+					</td>
+					<!-- 削除ボタン -->
+					<td th:if="${user} == 'admin'" align="center">
+						<form method="POST" th:action="@{/book/delete/{id}(id=${obj.id})}"> <!-- {id}に(id=)を代入 -->
+							<input type="hidden" name="_method" value="DELETE"> <!-- DELETEメソッドを隠しフィールドで送る -->
+							<input type="hidden" name="user" th:value="${user}"> <!-- 隠しフィールドとしてuserを渡す -->
+							<button type="submit" class="btn btn-secondary">削除</button>
+						</form>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
 	<!-- △△△ 書籍情報が1件でもあれば表示 △△△ -->
 	
 	<!-- ▽▽▽ 書籍情報が1件もない場合表示 ▽▽▽ -->
 	<p th:if="${#lists.isEmpty(bookList)}">登録されている書籍はありません</p>
 	<!-- △△△ 書籍情報が1件もない場合表示 △△△ -->
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
 </body>
 </html>

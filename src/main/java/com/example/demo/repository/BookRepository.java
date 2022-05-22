@@ -14,4 +14,7 @@ public interface BookRepository extends CrudRepository<Book, Integer> {
 	@Modifying
 	@Query("UPDATE book SET totalevaluation = :totalevaluation WHERE id = :id;")
 	void updateTotalevaluationById(@Param("id") Integer id, @Param("totalevaluation") Double totalevaluation);
+	
+	@Query("SELECT * FROM book WHERE title ILIKE '%' || :keyword || '%';")
+	Iterable<Book> searchAll(@Param("keyword") String keyword);
 }

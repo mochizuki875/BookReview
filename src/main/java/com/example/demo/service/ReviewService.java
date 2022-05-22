@@ -13,7 +13,7 @@ public interface ReviewService {
 	void deleteOneById(Integer id);
 
 	// RVを1件登録
-	void insertReview(Review review);
+	void insertOne(Review review);
 	
 	// 本のIDを指定してRVを全件取得
 	 Iterable<Review> selectAllByBookId(Integer bookid);

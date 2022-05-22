@@ -30,7 +30,7 @@ public class ReviewServiceImpl implements ReviewService {
 	
 	// RVを1件登録
 	@Override
-	public void insertReview(Review review) {
+	public void insertOne(Review review) {
 		reviewRepository.save(review);
 	}
 	

@@ -27,7 +27,7 @@ public class BookServiceImpl implements BookService {
 	}
 	
 	@Override
-	public void insertBook(Book book) {
+	public void insertOne(Book book) {
 		book.setTotalevaluation(0.0); // 暫定で本の評価は0とする
 		repository.save(book);
 	}
@@ -38,8 +38,13 @@ public class BookServiceImpl implements BookService {
 	}
 	
 	@Override
-	public void deleteBookById(Integer id) {
+	public void deleteOneById(Integer id) {
 		repository.deleteById(id);
+	}
+	
+	@Override
+	public Iterable<Book> searchAll(String keyword) {
+		return repository.searchAll(keyword);
 	}
 
 }

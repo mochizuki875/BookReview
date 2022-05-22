@@ -1,30 +1,35 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-<meta charset="UTF-8">
-<!-- ヘッダ -->
-<a href="#" th:href="@{/}">Book Review</a>
 
-<!-- CSSスタイルシートの読み込み -->
-<link th:href="@{/css/style.css}" rel="stylesheet">
-
-<title>New Book</title>
+<head th:replace="common/head :: head_fragment">
 </head>
+
 <body>
+	<!-- navbar -->
+	<nav th:replace="common/navbar :: nav_fragment">
+	</nav>
 
 	<h1 align="center">新しい本を登録しましょう！</h1>
-	<form method="POST" th:action="@{/book/insert}">
-		<div>
-			<label for="title">本のタイトル</label><br>
-			<input type="text" name="title">
-		</div>
-		<div>
-			<label for="overview">概要</label><br>
-			<textarea rows="5" cols="50" name="overview"></textarea><br>
-		</div>
-		<input type="submit" value="登録">
-	</form>
+	
+	<div class="container-fluid">
+		<form method="POST" th:action="@{/book/insert}">
+			<div class="col-md-6">
+				<label for="title" class="form-label">本のタイトル</label><br>
+				<input type="text" class="form-control" name="title" placeholder="本のタイトルを入力してください。">
+			</div>
+			<div class="col-md-6">
+				<label for="overview" class="form-label">概要</label><br>
+				<textarea class="form-control" rows="5" cols="50" name="overview" placeholder="本の概要を入力してください。"></textarea><br>
+			</div>	
+			<div>
+				<!-- 隠しフィールドとしてuserを渡す -->
+				<input type="hidden" name="user" th:value="${user}">
+			</div>
+			<button type="submit" class="btn btn-primary">登録</button>
+		</form>
+	</div>
 
-
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
 </body>
 </html>

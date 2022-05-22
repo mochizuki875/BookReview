@@ -11,10 +11,12 @@ public interface BookService {
 	// Bookを1件取得
 	Optional<Book> selectOneById(Integer id);
 	// Bookを1件登録
-	void insertBook(Book book);
+	void insertOne(Book book);
 	// Bookのtotalevaluationを更新
 	void updateTotalevaluationById(Integer id, Double totalevaluation);
 	// Bookの削除
-	void deleteBookById(Integer id);
+	void deleteOneById(Integer id);
+	// Bookの検索
+	Iterable<Book> searchAll(String keyword);
 
 }

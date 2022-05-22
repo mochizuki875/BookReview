@@ -9,7 +9,9 @@ import com.example.demo.entity.Book;
 import com.example.demo.entity.Review;
 import com.example.demo.repository.BookRepository;
 import com.example.demo.repository.ReviewRepository;
+import com.example.demo.service.BookService;
 import com.example.demo.service.ReviewService;
+
 
 
 
@@ -25,6 +27,8 @@ public class BookReviewApplication {
 	@Autowired
 	BookRepository repository;
 	@Autowired
+	BookService bookService;
+	@Autowired
 	ReviewRepository reviewRepository;
 	@Autowired
 	ReviewService reviewService;
@@ -34,11 +38,12 @@ public class BookReviewApplication {
 		// showList(); // 本を全件取得
 		// showOne(); // 本を1件取得
 		
-		showOneReview(); // RVを1件取得
-		deleteOneReview(); // RVを1件削除
-		insertOneReview(); // RVを1件追加
-		showReview(); // 特定の本のRVを取得
-		deleteAllReview(); // 特定の本に関連するRVを全て削除
+//		showOneReview(); // RVを1件取得
+//		deleteOneReview(); // RVを1件削除
+//		insertOneReview(); // RVを1件追加
+//		showReview(); // 特定の本のRVを取得
+//		deleteAllReview(); // 特定の本に関連するRVを全て削除
+		searchAll(); // Bookを検索
 	}
 	
 	// 全件取得メソッド
@@ -61,6 +66,16 @@ public class BookReviewApplication {
 			System.out.println("値が存在しませんでした。");
 		}
 		System.out.println("--- 1件取得完了 ---");
+	}
+	
+	// Bookをキーワードで検索
+	private void searchAll() {
+		System.out.println("--- 本の検索開始 ---");
+		Iterable<Book> books = bookService.searchAll("book");
+		for(Book book : books) {
+			System.out.println(book.getTitle());
+		}
+		System.out.println("--- 本の検索完了 ---");
 	}
 	
 	// RVを1件取得
@@ -90,7 +105,7 @@ public class BookReviewApplication {
 		review.setContent("テスト用RV登録");
 		review.setBookid(4);
 		review.setUserid(0);
-		reviewService.insertReview(review);		
+		reviewService.insertOne(review);		
 		System.out.println("--- 1件登録完了 ---");
 	}
 	

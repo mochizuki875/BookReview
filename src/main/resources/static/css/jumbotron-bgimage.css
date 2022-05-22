@@ -1,0 +1,5 @@
+.bg-img {
+  background-image: url("/images/top.jpg");
+  background-size: cover;
+  background-position: center 60%;
+}
