@@ -9,11 +9,13 @@
 	<nav th:replace="common/navbar :: nav_fragment">
 	</nav>
 
-	<h1 align="center" th:text="${book.title}">本のタイトル</h1>
-	<p th:if="${complete}" th:text="${complete}" style="color:blue"></p>
+	<div class="container-fluid pt-5">
+		<h1 align="center" th:text="${book.title}">本のタイトル</h1>
+	</div>
 	
 	<!-- 本の画像表示（一旦ダミー） -->
 	<center><img width=300px height=300px th:src="@{/images/default.png}"></center>
+	
 	
 	<!-- 本の詳細表示（本の情報を表示できなければエラーにしたい） -->
 	<div class="container-fluid pt-5">
@@ -33,8 +35,20 @@
 		</table>
 	</div>
 	
-	<br>
-	<h2 align="center">この本を読んだ人からのレビュー</h2>
+	<div class="container-fluid pt-5">
+		<h2 align="center">この本を読んだ人からのレビュー</h2>
+		
+		<!-- 登録完了コメント -->
+		<p th:if="${complete}" th:text="${complete}" style="color:blue"></p>
+		
+		<!-- RV登録ボタン -->
+		<form class="row" method="GET" th:action="@{/book/{id}/newreview(id=${book.id})}">
+			<!-- {id}に(id=)を代入 -->
+			<div class="d-grid gap-2 d-md-flex justify-content-md-end">
+				<button class="btn btn-primary" type="submit" th:name="user" th:value="${user}">RV登録</button>
+			</div>
+		</form>
+	</div>
 	
 	<div class="container-fluid pt-3">
 		<table class="table table-bordered table-responsive" th:unless="${#lists.isEmpty(reviewList)}">

@@ -8,9 +8,10 @@
 	<!-- navbar -->
 	<nav th:replace="common/navbar :: nav_fragment">
 	</nav>
-
-	<h1 align="center">本のレビューを登録しましょう！</h1>
-	<h2 th:text="${book.title}">本のタイトル</h2>
+	<div class="container-fluid pt-5">
+		<h1 align="center">本のレビューを登録しましょう！</h1>
+		<h2 th:text="${book.title}">本のタイトル</h2>
+	</div>
 	
 	<div class="container-fluid">
 		<form method="POST" th:action="@{/review/insert}">

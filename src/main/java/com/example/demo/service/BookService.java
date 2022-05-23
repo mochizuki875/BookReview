@@ -18,5 +18,7 @@ public interface BookService {
 	void deleteOneById(Integer id);
 	// Bookの検索
 	Iterable<Book> searchAll(String keyword);
+	// 上位n件のbookを取得
+	Iterable<Book> selectTopN(Integer n);
 
 }

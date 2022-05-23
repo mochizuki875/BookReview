@@ -18,7 +18,7 @@ public class BookServiceImpl implements BookService {
 
 	@Override
 	public Iterable<Book> selectAll() {
-		return repository.findAll();
+		return repository.selectAllDesc();
 	}
 
 	@Override
@@ -45,6 +45,11 @@ public class BookServiceImpl implements BookService {
 	@Override
 	public Iterable<Book> searchAll(String keyword) {
 		return repository.searchAll(keyword);
+	}
+	
+	@Override
+	public Iterable<Book> selectTopN(Integer n) {
+		return repository.selectTopN(n);
 	}
 
 }

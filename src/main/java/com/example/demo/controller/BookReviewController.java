@@ -31,9 +31,40 @@ public class BookReviewController {
 	public String showHome(@RequestParam(value="user", required=false) String user, Model model) {
 		model.addAttribute("user", user); // userをModelに格納
 		
+		// Iterable<Book> bookList = bookService.selectAll(); // Book情報を全件取得
+		Iterable<Book> bookList = bookService.selectTopN(5); // Book情報を全件取得	
+		model.addAttribute("bookList", bookList); // Modelに格納
+
+		return "home";
+	}
+	
+	// 全ての本を表示
+	@GetMapping("/book")
+	public String showAllBook(@RequestParam(value="user", required=false) String user, Model model) {
+		model.addAttribute("user", user); // userをModelに格納
+		
+		Boolean allBook = true; // 全てのBook表示フラグ
+		model.addAttribute("allBook", allBook); // Modelに格納
+		
 		Iterable<Book> bookList = bookService.selectAll(); // Book情報を全件取得		
 		model.addAttribute("bookList", bookList); // Modelに格納
 
+		return "home";
+	}	
+	
+	// 本の検索
+	// 検索ワードをリクエストパラメータとして受け取って検索結果を返す
+	@GetMapping("/book/search")
+	public String searchBook(@RequestParam(value="user", required=false) String user, @RequestParam(value="keyword", required=false) String keyword, RedirectAttributes redirectAttributes, Model model) {
+		model.addAttribute("user", user); // userをModelに格納
+		model.addAttribute("keyword", keyword); // keywordをModelに格納
+		
+		Iterable<Book> bookList = bookService.searchAll(keyword);
+		model.addAttribute(bookList);
+
+		if(keyword == null) {
+			return "redirect:/" + "?user=" + user;
+		}
 		return "home";
 	}
 	
@@ -56,21 +87,6 @@ public class BookReviewController {
 		return "detail";
 	}
 	
-	// 本の検索
-	// 検索ワードをリクエストパラメータとして受け取って検索結果を返す
-	@GetMapping("/book/search")
-	public String searchBook(@RequestParam(value="user", required=false) String user, @RequestParam(value="keyword", required=false) String keyword, RedirectAttributes redirectAttributes, Model model) {
-		model.addAttribute("user", user); // userをModelに格納
-		model.addAttribute("keyword", keyword); // keywordをModelに格納
-		
-		Iterable<Book> bookList = bookService.searchAll(keyword);
-		model.addAttribute(bookList);
-
-		if(keyword == null) {
-			return "redirect:/" + "?user=" + user;
-		}
-		return "home";
-	}
 	
 	// 本の新規登録画面
 	@GetMapping("/book/newbook")
@@ -90,9 +106,10 @@ public class BookReviewController {
 		book.setOverview(overview);
 		bookService.insertOne(book);
 		redirectAttributes.addFlashAttribute("complete", "登録が完了しました！"); // リダイレクト時のパラメータを設定する（登録完了メッセージ）
-				
-	
+		
 		return "redirect:/" + "?user=" + user;
+		// 新しいBookを登録したいが現状bookidが取得できないので保留
+//		return "redirect:/book/detail/" + bookid + "?user=" + user;
 	}
 	
 	// 本の削除
@@ -108,7 +125,7 @@ public class BookReviewController {
 	}
 
 	// RVの新規登録画面
-	@GetMapping("/book/{id}/newReview")
+	@GetMapping("/book/{id}/newreview")
 	public String newReview(@RequestParam(value="user", required=false) String user, @PathVariable Integer id, Model model) { // リクエストパラメーターでbookid欲しい
 		model.addAttribute("user", user); // userをModelに格納
 		

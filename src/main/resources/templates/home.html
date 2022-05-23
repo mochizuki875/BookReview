@@ -23,11 +23,7 @@
 				</div>
 			</div>
 		</div>
-		
-		<!-- 登録/更新完了コメント -->
-		<!-- ${complete}はinsertメソッドからRedirectパラメーターとして渡される -->
-		<p th:if="${complete}" th:text="${complete}" style="color:blue"></p>
-		
+				
 		<!-- 書籍情報の新規登録 -->		
 		<form method="GET" th:action="@{/book/newbook(user=${user})}"> <!-- {id}に(id=)を代入 -->
 			<button type="submit" th:name="user" th:value="${user}" class="btn btn-primary">新しい本を登録する</button> <!-- リクエストパラメータとしてuserを送る -->
@@ -39,6 +35,12 @@
 	<!-- ▽▽▽ 書籍情報が1件でもあれば表示 ▽▽▽ -->		
 	<!-- BookReviewControllerにてModelに格納したlistをユーティリティーオブジェクトを使ってチェックしている -->
 	<div class="container-fluid pt-5">
+		<!-- 登録/更新完了コメント -->
+		<!-- ${complete}はinsertメソッドからRedirectパラメーターとして渡される -->
+		<div class="col">
+			<p th:if="${complete}" th:text="${complete}" style="color:blue"></p>
+		</div>
+	
 		<table class="table table-bordered table-striped table-hover table-responsive" th:unless="${#lists.isEmpty(bookList)}">
 			<thead>
 				<tr class="text-center table-primary">
@@ -54,7 +56,7 @@
 					<!-- RV登録ボタン -->
 					<td class="text-center">
 						<form method="GET"
-							th:action="@{/book/{id}/newReview(id=${obj.id})}">
+							th:action="@{/book/{id}/newreview(id=${obj.id})}">
 							<!-- {id}に(id=)を代入 -->
 							<button type="submit" th:name="user" th:value="${user}" class="btn btn-primary">RV登録</button>
 						</form>
@@ -76,6 +78,21 @@
 				</tr>
 			</tbody>
 		</table>
+	</div>
+	
+	<div class="container-fluid">
+		<!-- 全件表示 -->
+		<form class="row" method="GET" th:action="@{/book}" th:unless="${allBook} == true">
+			<div class="d-grid gap-2 d-md-flex justify-content-md-end">
+				<button class="btn btn-outline-secondary" type="submit" th:name="user" th:value="${user}">全ての本を表示</button>
+			</div>
+		</form>
+		<!-- 上位5件表示 -->
+		<form class="row" method="GET" th:action="@{/}" th:if="${allBook} == true">
+			<div class="d-grid gap-2 d-md-flex justify-content-md-end">
+				<button class="btn btn-outline-success" type="submit" th:name="user" th:value="${user}">人気の本を表示</button>
+			</div>
+		</form>
 	</div>
 	
 	<!-- △△△ 書籍情報が1件でもあれば表示 △△△ -->

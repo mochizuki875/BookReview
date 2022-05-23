@@ -9,7 +9,9 @@
 	<nav th:replace="common/navbar :: nav_fragment">
 	</nav>
 
-	<h1 align="center">新しい本を登録しましょう！</h1>
+	<div class="container-fluid pt-5">
+		<h1 align="center">新しい本を登録しましょう！</h1>
+	</div>
 	
 	<div class="container-fluid">
 		<form method="POST" th:action="@{/book/insert}">
