@@ -8,17 +8,15 @@
 	<nav th:replace="common/navbar :: nav_fragment">
 	</nav>
 
-
-	<div class="p-3 p-sm-5 mb-4 bg-img">
-
-		
+	<div class="p-3 p-sm-5 mb-4 bg-img"> <!-- Junbotronで背景表示 -->
 		<!-- 検索ウインドウ -->
 		<div class="container-fluid p-5">
 			<div class="row justify-content-center">
 				<div class="col-md-5">
 					<form method="GET" class="d-flex" th:action="@{/book/search}">
 						<input class="form-control me-2 text-center" type="search" name="keyword" placeholder="Search Book..." aria-label="Search" th:value=${keyword}>
-						<button class="btn btn-success" type="submit" th:name="user" th:value="${user}">Search</button>
+						<input type="hidden" name="user" th:value="${user}">
+						<button class="btn btn-success" type="submit">Search</button>
 					</form>
 				</div>
 			</div>
@@ -26,75 +24,110 @@
 				
 		<!-- 書籍情報の新規登録 -->		
 		<form method="GET" th:action="@{/book/newbook(user=${user})}"> <!-- {id}に(id=)を代入 -->
-			<button type="submit" th:name="user" th:value="${user}" class="btn btn-primary">新しい本を登録する</button> <!-- リクエストパラメータとしてuserを送る -->
+			<input type="hidden" name="user" th:value="${user}">
+			<button type="submit" class="btn btn-primary">新しい本を登録する</button> <!-- リクエストパラメータとしてuserを送る -->
 		</form>
-		
 	</div>
-
 	
-	<!-- ▽▽▽ 書籍情報が1件でもあれば表示 ▽▽▽ -->		
-	<!-- BookReviewControllerにてModelに格納したlistをユーティリティーオブジェクトを使ってチェックしている -->
-	<div class="container-fluid pt-5">
-		<!-- 登録/更新完了コメント -->
-		<!-- ${complete}はinsertメソッドからRedirectパラメーターとして渡される -->
-		<div class="col">
-			<p th:if="${complete}" th:text="${complete}" style="color:blue"></p>
+	<!-- ▽▽▽ 書籍情報が1件でもあれば表示 ▽▽▽ -->	
+	<div th:unless="${#lists.isEmpty(bookList)}">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="d-grid gap-2 d-md-flex justify-content-md-end">
+					<!-- 上位5件表示 -->
+					<form method="GET" th:action="@{/}" th:unless="${showFlag} == 0">
+					<input type="hidden" name="user" th:value="${user}">
+							<button class="btn btn-outline-success" type="submit">人気の本を表示</button>
+					</form>
+					<!-- 全件表示 -->
+					<form method="GET" th:action="@{/book}" th:unless="${showFlag} == 1">
+							<input type="hidden" name="user" th:value="${user}">
+							<input type="hidden" name="page" th:value="1">
+							<button class="btn btn-outline-secondary" type="submit">全ての本を表示</button>
+					</form>
+				</div>
+			</div>
 		</div>
-	
-		<table class="table table-bordered table-striped table-hover table-responsive" th:unless="${#lists.isEmpty(bookList)}">
-			<thead>
-				<tr class="text-center table-primary">
-					<th scope="col">書籍名</th>
-					<th scope="col">評価</th>
-					<th scope="rol" colspan="3">各種操作</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr th:each="obj : ${bookList}">
-					<td th:text="${obj.title}" align="left"></td>
-					<td th:text="${obj.totalevaluation}" align="center"></td>
-					<!-- RV登録ボタン -->
-					<td class="text-center">
-						<form method="GET"
-							th:action="@{/book/{id}/newreview(id=${obj.id})}">
-							<!-- {id}に(id=)を代入 -->
-							<button type="submit" th:name="user" th:value="${user}" class="btn btn-primary">RV登録</button>
-						</form>
-					</td>
-					<!-- 詳細ボタン -->
-					<td class="text-center">
-						<form method="GET" th:action="@{/book/detail/{id}(id=${obj.id})}"> <!-- {id}に(id=)を代入 -->
-							<button type="submit" th:name="user" th:value="${user}" class="btn btn-primary">詳細</button> <!-- リクエストパラメータとしてuserを送る -->
-						</form>
-					</td>
-					<!-- 削除ボタン -->
-					<td th:if="${user} == 'admin'" align="center">
-						<form method="POST" th:action="@{/book/delete/{id}(id=${obj.id})}"> <!-- {id}に(id=)を代入 -->
-							<input type="hidden" name="_method" value="DELETE"> <!-- DELETEメソッドを隠しフィールドで送る -->
-							<input type="hidden" name="user" th:value="${user}"> <!-- 隠しフィールドとしてuserを渡す -->
-							<button type="submit" class="btn btn-secondary">削除</button>
-						</form>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
-	
-	<div class="container-fluid">
-		<!-- 全件表示 -->
-		<form class="row" method="GET" th:action="@{/book}" th:unless="${allBook} == true">
-			<div class="d-grid gap-2 d-md-flex justify-content-md-end">
-				<button class="btn btn-outline-secondary" type="submit" th:name="user" th:value="${user}">全ての本を表示</button>
+		<!-- BookReviewControllerにてModelに格納したlistをユーティリティーオブジェクトを使ってチェックしている -->
+		<div class="container-fluid pt-3">
+			<!-- 登録/更新完了コメント -->
+			<!-- ${complete}はinsertメソッドからRedirectパラメーターとして渡される -->
+			<div class="col">
+				<p th:if="${complete}" th:text="${complete}" style="color:blue"></p>
 			</div>
-		</form>
-		<!-- 上位5件表示 -->
-		<form class="row" method="GET" th:action="@{/}" th:if="${allBook} == true">
-			<div class="d-grid gap-2 d-md-flex justify-content-md-end">
-				<button class="btn btn-outline-success" type="submit" th:name="user" th:value="${user}">人気の本を表示</button>
-			</div>
-		</form>
-	</div>
-	
+		
+			<table class="table table-bordered table-striped table-hover table-responsive">
+				<thead>
+					<tr class="text-center table-primary">
+						<th scope="col">書籍名</th>
+						<th scope="col">評価</th>
+						<th scope="rol" colspan="3">各種操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="obj : ${bookList}">
+						<td th:text="${obj.title}" align="left"></td>
+						<td th:text="${obj.totalevaluation}" align="center"></td>
+						<!-- RV登録ボタン -->
+						<td class="text-center">
+							<form method="GET" th:action="@{/book/{id}/newreview(id=${obj.id})}"><!-- {id}に(id=)を代入 -->
+								<input type="hidden" name="user" th:value="${user}">
+								<button type="submit" class="btn btn-primary">RV登録</button>
+							</form>
+						</td>
+						<!-- 詳細ボタン -->
+						<td class="text-center">
+							<form method="GET" th:action="@{/book/detail/{id}(id=${obj.id})}"> <!-- {id}に(id=)を代入 -->
+								<input type="hidden" name="user" th:value="${user}">
+								<button type="submit" class="btn btn-primary">詳細</button> <!-- リクエストパラメータとしてuserを送る -->
+							</form>
+						</td>
+						<!-- 削除ボタン -->
+						<td th:if="${user} == 'admin'" align="center">
+							<form method="POST" th:action="@{/book/delete/{id}(id=${obj.id})}"> <!-- {id}に(id=)を代入 -->
+								<input type="hidden" name="_method" value="DELETE"> <!-- DELETEメソッドを隠しフィールドで送る -->
+								<input type="hidden" name="user" th:value="${user}"> <!-- 隠しフィールドとしてuserを渡す -->
+								<button type="submit" class="btn btn-secondary">削除</button>
+							</form>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
+		<!-- ページング -->
+		<div class="container-fluid">
+			<div class="row" th:unless="${showFlag} == 0">
+				<div class="d-grid gap-2 d-md-flex justify-content-md-end">
+				<nav aria-label="Page navigation book">
+						<ul class="pagination">
+							<!-- 先頭ページ -->
+							<li class="page-item">
+						      <a class="page-link" th:unless="${page} == 1" th:href="@{/book(user=${user}, page=1)}">&laquo;</a>
+						      <span class="page-link" aria-label="Previous" th:if="${page} == 1">&laquo;</span>
+						    </li>
+						    <!-- 各ページへのリンクを表示 -->
+							<li th:class="(${i}==${page})? 'page-item active' : 'page-item'" th:each='i : ${#numbers.sequence(1, allPages)}'>
+								<!-- 現在表示しているページはspan -->
+								<span class="page-link" th:if='${i}==${page}' th:text='${i}'>1
+									<span class="sr-only">(current)</span>
+								</span>
+								<!-- 現在表示している以外のページはリンク -->
+								<a class="page-link" th:unless='${i}==${page}' th:href="@{/book(user=${user}, page=${i})}">
+									<span th:text='${i}'>1</span>
+								</a>
+							</li>
+							<!-- 最後のページ -->
+							<li class="page-item">
+								<a class="page-link" th:unless="${page} == ${allPages}" th:href="@{/book(user=${user}, page=${allPages})}">&raquo;</a>
+								<span class="page-link" th:if="${page} == ${allPages}">&raquo;</span>
+							</li>
+						</ul>
+			     </nav>
+			     </div>
+		     </div>
+		 </div>
+	 </div>
 	<!-- △△△ 書籍情報が1件でもあれば表示 △△△ -->
 	
 	<!-- ▽▽▽ 書籍情報が1件もない場合表示 ▽▽▽ -->

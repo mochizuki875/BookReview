@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +23,23 @@ public class BookServiceImpl implements BookService {
 	}
 
 	@Override
+	public Integer countAllPages(Integer offset) {
+		return (int)Math.ceil((double)repository.countAll() / offset);
+	}
+	
+//	@Override
+	public Iterable<Book> selectAllDescByPage(Integer page, Integer limit) {
+		return repository.selectAllDescByLimitOffset(limit, limit*(page-1));
+	}
+
+	@Override
 	public Optional<Book> selectOneById(Integer id) {
 		return repository.findById(id);
 	}
 	
 	@Override
 	public void insertOne(Book book) {
-		book.setTotalevaluation(0.0); // 暫定で本の評価は0とする
+		book.setTotalevaluation(0.0); // デフォルトの本の評価は0とする
 		repository.save(book);
 	}
 	

@@ -31,22 +31,30 @@ public class BookReviewController {
 	public String showHome(@RequestParam(value="user", required=false) String user, Model model) {
 		model.addAttribute("user", user); // userをModelに格納
 		
+		Integer showFlag = 0; // Book表示フラグ
+		model.addAttribute("showFlag", showFlag); // Modelに格納
+		
 		// Iterable<Book> bookList = bookService.selectAll(); // Book情報を全件取得
-		Iterable<Book> bookList = bookService.selectTopN(5); // Book情報を全件取得	
+		Iterable<Book> bookList = bookService.selectTopN(10); // Book情報のうち上位10件を件取得	
 		model.addAttribute("bookList", bookList); // Modelに格納
 
 		return "home";
 	}
 	
-	// 全ての本を表示
+	// 全ての本を表示（50件単位でページ分割した際の指定されたページ分）
 	@GetMapping("/book")
-	public String showAllBook(@RequestParam(value="user", required=false) String user, Model model) {
+	public String showAllBook(@RequestParam(value="user", required=false) String user, @RequestParam(value="page", defaultValue = "1") Integer page, Model model) {
 		model.addAttribute("user", user); // userをModelに格納
 		
-		Boolean allBook = true; // 全てのBook表示フラグ
-		model.addAttribute("allBook", allBook); // Modelに格納
+		model.addAttribute("page", page); // pageをModelに格納
 		
-		Iterable<Book> bookList = bookService.selectAll(); // Book情報を全件取得		
+		Integer showFlag = 1; // Book表示フラグ
+		model.addAttribute("showFlag", showFlag); // Modelに格納
+		
+		Integer allPages = bookService.countAllPages(50); // 全ページ数を取得
+		model.addAttribute("allPages", allPages); // Modelに格納
+		
+		Iterable<Book> bookList = bookService.selectAllDescByPage(page,50); // Book情報を全件取得		
 		model.addAttribute("bookList", bookList); // Modelに格納
 
 		return "home";
@@ -57,6 +65,10 @@ public class BookReviewController {
 	@GetMapping("/book/search")
 	public String searchBook(@RequestParam(value="user", required=false) String user, @RequestParam(value="keyword", required=false) String keyword, RedirectAttributes redirectAttributes, Model model) {
 		model.addAttribute("user", user); // userをModelに格納
+		
+		Integer showFlag = 2; // Book表示フラグ
+		model.addAttribute("showFlag", showFlag); // Modelに格納
+		
 		model.addAttribute("keyword", keyword); // keywordをModelに格納
 		
 		Iterable<Book> bookList = bookService.searchAll(keyword);

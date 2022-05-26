@@ -1,5 +1,7 @@
 package com.example.demo.repository;
 
+
+
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -23,7 +25,15 @@ public interface BookRepository extends CrudRepository<Book, Integer> {
 	@Query("SELECT * FROM book ORDER BY totalevaluation DESC;")
 	Iterable<Book> selectAllDesc();
 	
-	// totalevaluationが上位n件のBookを取得する
+	// totalevaluationが高い順にBookをoffset付きでlimit件取得
+	@Query("SELECT * FROM (SELECT * FROM book ORDER BY totalevaluation DESC) selectAllDesc LIMIT :limit OFFSET :offset;")
+	Iterable<Book> selectAllDescByLimitOffset(@Param("limit") Integer limit, @Param("offset") Integer offset);
+	
+	// レコード数を取得する
+	@Query("SELECT COUNT(*) FROM book;")
+	Integer countAll();
+
+	// totalevaluationが上位n件のBookを取得する 
 	@Query("SELECT * FROM book ORDER BY totalevaluation DESC LIMIT :n;")
 	Iterable<Book> selectTopN(@Param("n") Integer n);
 }

@@ -1,4 +1,5 @@
 package com.example.demo;
+
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,17 +34,22 @@ public class BookReviewApplication {
 	@Autowired
 	ReviewService reviewService;
 	
+	
 	// テスト用実行メソッド
 	private void execute() {
 		// showList(); // 本を全件取得
 		// showOne(); // 本を1件取得
+		// searchAll(); // Bookを検索
+		// countAllPages(); // ページ分割した際のページ数を取得
+		// selectAllDescByPage(); // Bookをlimitを指定してPage単位で取得する
+		// showListByPage();// BookをPage単位で取得
 		
-//		showOneReview(); // RVを1件取得
-//		deleteOneReview(); // RVを1件削除
-//		insertOneReview(); // RVを1件追加
-//		showReview(); // 特定の本のRVを取得
-//		deleteAllReview(); // 特定の本に関連するRVを全て削除
-		searchAll(); // Bookを検索
+		// showOneReview(); // RVを1件取得
+		// deleteOneReview(); // RVを1件削除
+		// insertOneReview(); // RVを1件追加
+		// showReview(); // 特定の本のRVを取得
+		// deleteAllReview(); // 特定の本に関連するRVを全て削除
+		
 	}
 	
 	// 全件取得メソッド
@@ -54,6 +60,23 @@ public class BookReviewApplication {
 			System.out.println(book);
 		}
 		System.out.println("--- 全件取得完了 ---");
+	}
+
+	// ページ分割した際のページ数を取得
+	private void countAllPages() {
+		System.out.println("--- ページ数取得開始 ---");
+		System.out.println(bookService.countAllPages(5));
+		System.out.println("--- ページ数取得完了 ---");
+	}
+	
+	// Bookをlimitを指定してPage単位で取得するメソッド
+	private void selectAllDescByPage() {		
+		System.out.println("--- Nページ目のBook取得開始 ---");
+		Iterable<Book> books = bookService.selectAllDescByPage(2,3);
+		for(Book book : books) {
+			System.out.println(book.getTitle() + ":" + book.getTotalevaluation());
+		}
+		System.out.println("--- Nページ目のBook取得完了 ---");
 	}
 	
 	// 1件取得メソッド

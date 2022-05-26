@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+
 import java.util.Optional;
 
 import com.example.demo.entity.Book;
@@ -8,6 +9,10 @@ public interface BookService {
 	
 	// Book全件取得
 	Iterable<Book> selectAll();
+	// Bookをoffset単位で分割表示する際のページ数を取得
+	Integer countAllPages(Integer offset);
+	// Bookをlimit単位でページ分割し指定したページに含まれるBook一覧を取得
+	Iterable<Book> selectAllDescByPage(Integer page, Integer limit);
 	// Bookを1件取得
 	Optional<Book> selectOneById(Integer id);
 	// Bookを1件登録
