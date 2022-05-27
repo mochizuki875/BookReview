@@ -8,6 +8,7 @@
 	<!-- navbar -->
 	<nav th:replace="common/navbar :: nav_fragment">
 	</nav>
+	
 	<div class="container-fluid pt-5">
 		<h1 align="center">本のレビューを登録しましょう！</h1>
 		<h2 th:text="${book.title}">本のタイトル</h2>
@@ -17,7 +18,8 @@
 		<form method="POST" th:action="@{/review/insert}">
 			<div class="col-md-1">
 				<label class="form-label" for="evaluation">評価</label><br>
-				<input class="form-control" type="number" name="evaluation" min="1" max="5" value="3">
+				<!-- <input class="form-control" type="number" name="evaluation" min="1" max="5" value="3"> -->
+				<input class="rating rating-loading" name="evaluation" value="3" data-show-clear="false" data-show-caption="false" data-min="0" data-max="5" data-step="1" data-size="xs">
 			</div>
 			<div class="col-md-6">
 				<label  class="form-label" for="content">レビュー</label><br>
@@ -35,7 +37,24 @@
 		</form>
 	</div>
 
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
+    <!-- JSとjQueryの読み込み -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+
+    <!-- <script src="js/star-rating.js" type="text/javascript"></script>
+    <script src="js/themes/krajee-svg/theme.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-star-rating@4.1.2/js/star-rating.js" type="text/javascript"></script>
+
+    <!-- optionally if you need to use a theme, then include the theme file as mentioned below -->
+    <script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-star-rating@4.1.2/themes/krajee-svg/theme.js"></script>
+    
+    <!-- optionally if you need translation for your language then include locale file as mentioned below (replace LANG.js with your locale specific file) -->
+    <script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-star-rating@4.1.2/js/locales/LANG.js"></script>
+
+    <script>
+		$(document).ready(function(){
+		    $('.show-rating').rating({displayOnly: true, showCaption: false, step: 0.5, size: "xs"});
+		});
+	</script>
 </body>
 </html>

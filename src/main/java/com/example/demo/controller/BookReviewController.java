@@ -34,7 +34,6 @@ public class BookReviewController {
 		Integer showFlag = 0; // Book表示フラグ
 		model.addAttribute("showFlag", showFlag); // Modelに格納
 		
-		// Iterable<Book> bookList = bookService.selectAll(); // Book情報を全件取得
 		Iterable<Book> bookList = bookService.selectTopN(10); // Book情報のうち上位10件を件取得	
 		model.addAttribute("bookList", bookList); // Modelに格納
 
@@ -48,11 +47,11 @@ public class BookReviewController {
 		
 		model.addAttribute("page", page); // pageをModelに格納
 		
-		Integer showFlag = 1; // Book表示フラグ
-		model.addAttribute("showFlag", showFlag); // Modelに格納
-		
 		Integer allPages = bookService.countAllPages(50); // 全ページ数を取得
 		model.addAttribute("allPages", allPages); // Modelに格納
+		
+		Integer showFlag = 1; // Book表示フラグ
+		model.addAttribute("showFlag", showFlag); // Modelに格納
 		
 		Iterable<Book> bookList = bookService.selectAllDescByPage(page,50); // Book情報を全件取得		
 		model.addAttribute("bookList", bookList); // Modelに格納
@@ -60,18 +59,23 @@ public class BookReviewController {
 		return "home";
 	}	
 	
-	// 本の検索
+	// 本の検索（★ページ分割するように直す）
 	// 検索ワードをリクエストパラメータとして受け取って検索結果を返す
 	@GetMapping("/book/search")
-	public String searchBook(@RequestParam(value="user", required=false) String user, @RequestParam(value="keyword", required=false) String keyword, RedirectAttributes redirectAttributes, Model model) {
+	public String searchBook(@RequestParam(value="user", required=false) String user, @RequestParam(value="keyword", required=false) String keyword, @RequestParam(value="page", defaultValue = "1") Integer page, RedirectAttributes redirectAttributes, Model model) {
 		model.addAttribute("user", user); // userをModelに格納
+		
+		model.addAttribute("page", page); // pageをModelに格納
+		
+		Integer allPages = bookService.countAllPages(50); // 全ページ数を取得
+		model.addAttribute("allPages", allPages); // Modelに格納
 		
 		Integer showFlag = 2; // Book表示フラグ
 		model.addAttribute("showFlag", showFlag); // Modelに格納
 		
 		model.addAttribute("keyword", keyword); // keywordをModelに格納
 		
-		Iterable<Book> bookList = bookService.searchAll(keyword);
+		Iterable<Book> bookList = bookService.searchAll(keyword); // ★ここをページ分割して取るようにする
 		model.addAttribute(bookList);
 
 		if(keyword == null) {

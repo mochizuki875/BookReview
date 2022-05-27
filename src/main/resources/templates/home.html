@@ -28,7 +28,7 @@
 			<button type="submit" class="btn btn-primary">新しい本を登録する</button> <!-- リクエストパラメータとしてuserを送る -->
 		</form>
 	</div>
-	
+
 	<!-- ▽▽▽ 書籍情報が1件でもあれば表示 ▽▽▽ -->	
 	<div th:unless="${#lists.isEmpty(bookList)}">
 		<div class="container-fluid">
@@ -59,15 +59,21 @@
 			<table class="table table-bordered table-striped table-hover table-responsive">
 				<thead>
 					<tr class="text-center table-primary">
-						<th scope="col">書籍名</th>
-						<th scope="col">評価</th>
-						<th scope="rol" colspan="3">各種操作</th>
+						<th scope="col" style="width: 50%">書籍名</th>
+						<th scope="col" style="width: 20%">評価</th>
+						<th scope="rol" colspan="3" style="width: 30%">各種操作</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr th:each="obj : ${bookList}">
 						<td th:text="${obj.title}" align="left"></td>
-						<td th:text="${obj.totalevaluation}" align="center"></td>
+						<!-- 評価をスター表示 -->
+						<td class="text-center">
+							<div class="row">
+								<input class="show-rating rating-loading" name="rate" th:value="${obj.totalevaluation}">
+								<label class="col" th:text="'(' + ${obj.totalevaluation} + ')'"></label>
+							</div>
+						</td>
 						<!-- RV登録ボタン -->
 						<td class="text-center">
 							<form method="GET" th:action="@{/book/{id}/newreview(id=${obj.id})}"><!-- {id}に(id=)を代入 -->
@@ -134,7 +140,26 @@
 	<p th:if="${#lists.isEmpty(bookList)}">登録されている書籍はありません</p>
 	<!-- △△△ 書籍情報が1件もない場合表示 △△△ -->
 	
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
+
+    <!-- JSとjQueryの読み込み -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+
+    <!-- <script src="js/star-rating.js" type="text/javascript"></script>
+    <script src="js/themes/krajee-svg/theme.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-star-rating@4.1.2/js/star-rating.js" type="text/javascript"></script>
+
+    <!-- optionally if you need to use a theme, then include the theme file as mentioned below -->
+    <script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-star-rating@4.1.2/themes/krajee-svg/theme.js"></script>
+    
+    <!-- optionally if you need translation for your language then include locale file as mentioned below (replace LANG.js with your locale specific file) -->
+    <script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-star-rating@4.1.2/js/locales/LANG.js"></script>
+
+    <script>
+		$(document).ready(function(){
+		    $('.show-rating').rating({displayOnly: true, showCaption: false, step: 0.5, size: "xs"});
+		});
+	</script>
+	
 </body>
 </html>
