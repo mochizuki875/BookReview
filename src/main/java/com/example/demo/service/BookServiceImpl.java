@@ -54,8 +54,8 @@ public class BookServiceImpl implements BookService {
 	}
 	
 	@Override
-	public Iterable<Book> searchAll(String keyword) {
-		return repository.searchAll(keyword);
+	public Iterable<Book> searchAllDescByPage(String keyword, Integer page, Integer limit){
+		return repository.searchAllDescByLimitOffset(keyword, limit, limit*(page-1));
 	}
 	
 	@Override

@@ -75,7 +75,8 @@ public class BookReviewController {
 		
 		model.addAttribute("keyword", keyword); // keywordをModelに格納
 		
-		Iterable<Book> bookList = bookService.searchAll(keyword); // ★ここをページ分割して取るようにする
+		// Iterable<Book> bookList = bookService.searchAll(keyword); // ★ここをページ分割して取るようにする
+		Iterable<Book> bookList = bookService.searchAllDescByPage(keyword, page, 50);
 		model.addAttribute(bookList);
 
 		if(keyword == null) {

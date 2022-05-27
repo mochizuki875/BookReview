@@ -17,9 +17,9 @@ public interface BookRepository extends CrudRepository<Book, Integer> {
 	@Query("UPDATE book SET totalevaluation = :totalevaluation WHERE id = :id;")
 	void updateTotalevaluationById(@Param("id") Integer id, @Param("totalevaluation") Double totalevaluation);
 	
-	// keywordでBook titleを検索する
-	@Query("SELECT * FROM book WHERE title ILIKE '%' || :keyword || '%';")
-	Iterable<Book> searchAll(@Param("keyword") String keyword);
+	// keywordでBook titleを検索しtotalevaluationが高い順にoffset付きでlimit件取得
+	@Query("SELECT * FROM (SELECT * FROM book WHERE title ILIKE '%' || :keyword || '%' ORDER BY totalevaluation DESC) selectAllDesc LIMIT :limit OFFSET :offset;")
+	Iterable<Book> searchAllDescByLimitOffset(@Param("keyword") String keyword, @Param("limit") Integer limit, @Param("offset") Integer offset);
 	
 	// totalevaluationが高い順にBookを全件取得する
 	@Query("SELECT * FROM book ORDER BY totalevaluation DESC;")

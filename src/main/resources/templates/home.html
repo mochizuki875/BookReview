@@ -105,12 +105,16 @@
 		<div class="container-fluid">
 			<div class="row" th:unless="${showFlag} == 0">
 				<div class="d-grid gap-2 d-md-flex justify-content-md-end">
-				<nav aria-label="Page navigation book">
+					<nav aria-label="Page navigation book">
 						<ul class="pagination">
 							<!-- 先頭ページ -->
 							<li class="page-item">
-						      <a class="page-link" th:unless="${page} == 1" th:href="@{/book(user=${user}, page=1)}">&laquo;</a>
-						      <span class="page-link" aria-label="Previous" th:if="${page} == 1">&laquo;</span>
+						     	<!-- keywordなしの場合は全件取得ページリンク -->
+								<a class="page-link" th:if='${!(page==1) && keyword==null}' th:href="@{/book(user=${user}, page=1)}">&laquo;</a>
+								<span class="page-link" th:if='${page==1 && keyword==null}'>&laquo;</span>
+								<!-- keywordありの場合は検索結果へのページリンク -->
+								<a class="page-link" th:if='${!(page==1) && !(keyword==null)}' th:href="@{/book/search(user=${user}, keyword=${keyword}, page=1)}">&laquo;</a>
+								<span class="page-link" th:if='${page==1 && !(keyword==null)}'>&laquo;</span>    
 						    </li>
 						    <!-- 各ページへのリンクを表示 -->
 							<li th:class="(${i}==${page})? 'page-item active' : 'page-item'" th:each='i : ${#numbers.sequence(1, allPages)}'>
@@ -118,18 +122,27 @@
 								<span class="page-link" th:if='${i}==${page}' th:text='${i}'>1
 									<span class="sr-only">(current)</span>
 								</span>
-								<!-- 現在表示している以外のページはリンク -->
-								<a class="page-link" th:unless='${i}==${page}' th:href="@{/book(user=${user}, page=${i})}">
+								<!-- 現在表示している以外のページはリンクを表示 -->
+								<!-- keywordなしの場合は全件取得ページリンク -->
+								<a class="page-link" th:if='${!(i==page) && keyword==null}' th:href="@{/book(user=${user}, page=${i})}">
 									<span th:text='${i}'>1</span>
 								</a>
+								<!-- keywordありの場合は検索結果へのページリンク -->
+								<a class="page-link" th:if='${!(i==page) && !(keyword==null)}' th:href="@{/book/search(user=${user}, keyword=${keyword}, page=${i})}">
+										<span th:text='${i}'>1</span>
+								</a>	
 							</li>
 							<!-- 最後のページ -->
 							<li class="page-item">
-								<a class="page-link" th:unless="${page} == ${allPages}" th:href="@{/book(user=${user}, page=${allPages})}">&raquo;</a>
-								<span class="page-link" th:if="${page} == ${allPages}">&raquo;</span>
+								<!-- keywordなしの場合は全件取得ページリンク -->
+								<a class="page-link" th:if='${!(page==allPages) && keyword==null}' th:href="@{/book(user=${user}, page=${allPages})}">&raquo;</a>
+								<span class="page-link" th:if='${page==allPages && keyword==null}'>&raquo;</span>
+								<!-- keywordありの場合は検索結果へのページリンク -->
+								<a class="page-link" th:if='${!(page==allPages) && !(keyword==null)}' th:href="@{/book/search(user=${user}, keyword=${keyword}, page=${allPages})}">&raquo;</a>
+								<span class="page-link" th:if='${page==allPages && !(keyword==null)}'>&raquo;</span>
 							</li>
 						</ul>
-			     </nav>
+			    	 </nav>
 			     </div>
 		     </div>
 		 </div>

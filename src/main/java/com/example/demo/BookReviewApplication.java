@@ -92,14 +92,14 @@ public class BookReviewApplication {
 	}
 	
 	// Bookをキーワードで検索
-	private void searchAll() {
-		System.out.println("--- 本の検索開始 ---");
-		Iterable<Book> books = bookService.searchAll("book");
-		for(Book book : books) {
-			System.out.println(book.getTitle());
-		}
-		System.out.println("--- 本の検索完了 ---");
-	}
+//	private void searchAll() {
+//		System.out.println("--- 本の検索開始 ---");
+//		Iterable<Book> books = bookService.searchAll("book");
+//		for(Book book : books) {
+//			System.out.println(book.getTitle());
+//		}
+//		System.out.println("--- 本の検索完了 ---");
+//	}
 	
 	// RVを1件取得
 	private void showOneReview() {
