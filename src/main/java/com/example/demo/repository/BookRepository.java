@@ -1,7 +1,5 @@
 package com.example.demo.repository;
 
-
-
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -11,29 +9,33 @@ import com.example.demo.entity.Book;
 
 //CrudRepositoryの拡張インターフェースとしてRepositoryを作成
 public interface BookRepository extends CrudRepository<Book, Integer> {
-	// 本のIDを指定してtotalevaluationを更新する
-	// DML系クエリを実行する際は@Modifyingが必要
-	@Modifying
-	@Query("UPDATE book SET totalevaluation = :totalevaluation WHERE id = :id;")
-	void updateTotalevaluationById(@Param("id") Integer id, @Param("totalevaluation") Double totalevaluation);
-	
-	// keywordでBook titleを検索しtotalevaluationが高い順にoffset付きでlimit件取得
-	@Query("SELECT * FROM (SELECT * FROM book WHERE title ILIKE '%' || :keyword || '%' ORDER BY totalevaluation DESC) selectAllDesc LIMIT :limit OFFSET :offset;")
-	Iterable<Book> searchAllDescByLimitOffset(@Param("keyword") String keyword, @Param("limit") Integer limit, @Param("offset") Integer offset);
-	
 	// totalevaluationが高い順にBookを全件取得する
 	@Query("SELECT * FROM book ORDER BY totalevaluation DESC;")
 	Iterable<Book> selectAllDesc();
 	
-	// totalevaluationが高い順にBookをoffset付きでlimit件取得
-	@Query("SELECT * FROM (SELECT * FROM book ORDER BY totalevaluation DESC) selectAllDesc LIMIT :limit OFFSET :offset;")
-	Iterable<Book> selectAllDescByLimitOffset(@Param("limit") Integer limit, @Param("offset") Integer offset);
+	// totalevaluationが上位n件のBookを取得する 
+	@Query("SELECT * FROM book ORDER BY totalevaluation DESC, id ASC LIMIT :n;")
+	Iterable<Book> selectTopN(@Param("n") Integer n);
 	
 	// レコード数を取得する
 	@Query("SELECT COUNT(*) FROM book;")
 	Integer countAll();
 
-	// totalevaluationが上位n件のBookを取得する 
-	@Query("SELECT * FROM book ORDER BY totalevaluation DESC LIMIT :n;")
-	Iterable<Book> selectTopN(@Param("n") Integer n);
+	// totalevaluationが高い順にBookをoffset付きでlimit件取得
+	@Query("SELECT * FROM (SELECT * FROM book ORDER BY totalevaluation DESC, id ASC) selectAllDesc LIMIT :limit OFFSET :offset;")
+	Iterable<Book> selectAllDescByLimitOffset(@Param("limit") Integer limit, @Param("offset") Integer offset);
+
+	// keywordでBook titleを検索しtotalevaluationが高い順にBookをoffset付きでlimit件取得
+	@Query("SELECT * FROM (SELECT * FROM book WHERE title ILIKE '%' || :keyword || '%' ORDER BY totalevaluation DESC, id ASC) selectAllDesc LIMIT :limit OFFSET :offset;")
+	Iterable<Book> searchAllDescByLimitOffset(@Param("keyword") String keyword, @Param("limit") Integer limit, @Param("offset") Integer offset);	
+	
+	// keword検索にヒットしたBook件数を取得
+	@Query("SELECT COUNT(*) FROM book WHERE title ILIKE '%' || :keyword || '%';")
+	Integer countSearchAll(@Param("keyword") String keyword);
+	
+	// Bookのidを指定してtotalevaluationを更新する
+	// DML系クエリを実行する際は@Modifyingが必要
+	@Modifying
+	@Query("UPDATE book SET totalevaluation = :totalevaluation WHERE id = :id;")
+	void updateTotalevaluationById(@Param("id") Integer id, @Param("totalevaluation") Double totalevaluation);
 }

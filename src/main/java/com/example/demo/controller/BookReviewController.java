@@ -26,6 +26,9 @@ public class BookReviewController {
 	@Autowired
 	ReviewService reviewService;
 	
+	static Integer topNumber = 10; // トップページの表示件数
+	static Integer pageSize = 30; // 1ページあたりの表示件数
+	
 	// ホーム画面を表示
 	@GetMapping("/")
 	public String showHome(@RequestParam(value="user", required=false) String user, Model model) {
@@ -34,51 +37,51 @@ public class BookReviewController {
 		Integer showFlag = 0; // Book表示フラグ
 		model.addAttribute("showFlag", showFlag); // Modelに格納
 		
-		Iterable<Book> bookList = bookService.selectTopN(10); // Book情報のうち上位10件を件取得	
+		Iterable<Book> bookList = bookService.selectTopN(topNumber); // Book情報のうち上位topNumber件を件取得	
 		model.addAttribute("bookList", bookList); // Modelに格納
 
 		return "home";
 	}
 	
-	// 全ての本を表示（50件単位でページ分割した際の指定されたページ分）
+	// 全ての本を表示（page件単位でページ分割した際の指定されたページ分）
 	@GetMapping("/book")
 	public String showAllBook(@RequestParam(value="user", required=false) String user, @RequestParam(value="page", defaultValue = "1") Integer page, Model model) {
 		model.addAttribute("user", user); // userをModelに格納
 		
 		model.addAttribute("page", page); // pageをModelに格納
 		
-		Integer allPages = bookService.countAllPages(50); // 全ページ数を取得
+		Integer allPages = bookService.countAllPages(pageSize); // 全ページ数を取得
 		model.addAttribute("allPages", allPages); // Modelに格納
 		
 		Integer showFlag = 1; // Book表示フラグ
 		model.addAttribute("showFlag", showFlag); // Modelに格納
 		
-		Iterable<Book> bookList = bookService.selectAllDescByPage(page,50); // Book情報を全件取得		
+		Iterable<Book> bookList = bookService.selectAllDescByPage(page, pageSize); // Book情報を取得		
 		model.addAttribute("bookList", bookList); // Modelに格納
 
 		return "home";
 	}	
 	
-	// 本の検索（★ページ分割するように直す）
-	// 検索ワードをリクエストパラメータとして受け取って検索結果を返す
+	// 本の検索
+	// 検索ワードをリクエストパラメータとして受け取って検索結果を返す（page件単位でページ分割した際の指定されたページ分）
 	@GetMapping("/book/search")
 	public String searchBook(@RequestParam(value="user", required=false) String user, @RequestParam(value="keyword", required=false) String keyword, @RequestParam(value="page", defaultValue = "1") Integer page, RedirectAttributes redirectAttributes, Model model) {
-		model.addAttribute("user", user); // userをModelに格納
-		
+		model.addAttribute("user", user); // userをModelに格納		
 		model.addAttribute("page", page); // pageをModelに格納
-		
-		Integer allPages = bookService.countAllPages(50); // 全ページ数を取得
-		model.addAttribute("allPages", allPages); // Modelに格納
-		
+		model.addAttribute("keyword", keyword); // keywordをModelに格納
+				
 		Integer showFlag = 2; // Book表示フラグ
 		model.addAttribute("showFlag", showFlag); // Modelに格納
-		
-		model.addAttribute("keyword", keyword); // keywordをModelに格納
-		
-		// Iterable<Book> bookList = bookService.searchAll(keyword); // ★ここをページ分割して取るようにする
-		Iterable<Book> bookList = bookService.searchAllDescByPage(keyword, page, 50);
-		model.addAttribute(bookList);
 
+		Iterable<Book> bookList = bookService.searchAllDescByPage(keyword, page, pageSize); // Book情報を取得
+		model.addAttribute(bookList);
+		
+		// (バグ)この時点でbookListには1ページ分の結果しか入ってないのでこれをもとに全ページ数取るとおかしい
+		// Integer allPages = bookService.countAllPages(pageSize); // 全ページ数を取得（★もうちょい綺麗にやれそう）
+		Integer allPages = bookService.countSearchAllPages(keyword, pageSize);
+		
+		model.addAttribute("allPages", allPages); // Modelに格納
+		
 		if(keyword == null) {
 			return "redirect:/" + "?user=" + user;
 		}
@@ -91,19 +94,16 @@ public class BookReviewController {
 	public String showBook(@RequestParam(value="user", required=false) String user, @PathVariable Integer id, Model model) {
 		model.addAttribute("user", user); // userをModelに格納
 		
-		// 本の情報を取得
-		Optional<Book> bookOpt = bookService.selectOneById(id);
+		Optional<Book> bookOpt = bookService.selectOneById(id); // 本の情報を取得
 		if(bookOpt.isPresent()) {
 			model.addAttribute("book", bookOpt.get());
 		}
 		
-		// 本のRVを取得
-		Iterable<Review> reviewList = reviewService.selectAllByBookId(id);
+		Iterable<Review> reviewList = reviewService.selectAllByBookId(id); // 本のRVを取得
 		model.addAttribute(reviewList);
 		
 		return "detail";
 	}
-	
 	
 	// 本の新規登録画面
 	@GetMapping("/book/newbook")
@@ -114,19 +114,15 @@ public class BookReviewController {
 	
 	// 本の新規登録
 	@PostMapping("/book/insert")
-	public String insert(@RequestParam(value="user", required=false) String user, @RequestParam String title, @RequestParam String overview, RedirectAttributes redirectAttributes, Model model) {
+	public String insert(@RequestParam(value="user", required=false) String user, @RequestParam String title, @RequestParam String overview, Model model) {
 		model.addAttribute("user", user); // userをModelに格納
 		
 		Book book = new Book();
-		// @DataアノテーションによりBookの各フィールドに対するgetter/setterが使える
 		book.setTitle(title);
 		book.setOverview(overview);
-		bookService.insertOne(book);
-		redirectAttributes.addFlashAttribute("complete", "登録が完了しました！"); // リダイレクト時のパラメータを設定する（登録完了メッセージ）
+		book = bookService.insertOne(book); // Bookの新規登録
 		
-		return "redirect:/" + "?user=" + user;
-		// 新しいBookを登録したいが現状bookidが取得できないので保留
-//		return "redirect:/book/detail/" + bookid + "?user=" + user;
+		return "redirect:/book/detail/" + book.getId() + "?user=" + user; // 登録したBookの詳細ページを返す
 	}
 	
 	// 本の削除
@@ -134,10 +130,10 @@ public class BookReviewController {
 	public String deleteReview(@RequestParam(value="user", required=false) String user, @PathVariable Integer bookid, RedirectAttributes redirectAttributes, Model model) {
 		model.addAttribute("user", user); // userをModelに格納
 		
-		reviewService.deleteAllByBookId(bookid); // Bookに紐付くreviewを全件削除
+		reviewService.deleteAllByBookId(bookid); // Bookに紐付くReviewを全件削除
 		bookService.deleteOneById(bookid); // Bookを削除
 		
-		redirectAttributes.addFlashAttribute("complete", "対象の本の削除が完了しました。"); // リダイレクト時のパラメータを設定する（登録完了メッセージ）
+		redirectAttributes.addFlashAttribute("complete", "対象の本の削除が完了しました。"); // リダイレクト時のパラメータを設定する（削除完了メッセージ）
 		return "redirect:/" + "?user=" + user;
 	}
 
@@ -145,11 +141,11 @@ public class BookReviewController {
 	@GetMapping("/book/{id}/newreview")
 	public String newReview(@RequestParam(value="user", required=false) String user, @PathVariable Integer id, Model model) { // リクエストパラメーターでbookid欲しい
 		model.addAttribute("user", user); // userをModelに格納
+		model.addAttribute("bookid", id); // BookのidをModelに格納
 		
-		model.addAttribute("bookid", id);
-		Optional<Book> bookOpt = bookService.selectOneById(id);
+		Optional<Book> bookOpt = bookService.selectOneById(id); // idをベースにBookを取得
 		if(bookOpt.isPresent()) {
-			model.addAttribute("book", bookOpt.get());
+			model.addAttribute("book", bookOpt.get()); // BookをModelに格納
 		}
 		return "newreview";
 	}
@@ -164,10 +160,10 @@ public class BookReviewController {
 		review.setContent(content);
 		review.setBookid(bookid);
 		review.setUserid(userid);
-		reviewService.insertOne(review);
 		
-		// RV対象のReviewを全て取得
-		Iterable<Review> reviewList = reviewService.selectAllByBookId(bookid);
+		reviewService.insertOne(review); // Reviewを登録
+		
+		Iterable<Review> reviewList = reviewService.selectAllByBookId(bookid); // 対象BookのReviewを全て取得
 		
 		// 取得したReviewのevaluationの平均値を算出
 		Double totalEvaluation = 0.0;
@@ -177,8 +173,7 @@ public class BookReviewController {
 			counter ++;
 		}
 		
-		// bookテーブルのtotalevaluationを更新
-		bookService.updateTotalevaluationById(bookid, (double)Math.round(totalEvaluation*10/counter)/10);
+		bookService.updateTotalevaluationById(bookid, (double)Math.round(totalEvaluation*10/counter)/10); // 対象Bookのtotalevaluationを更新
 		
 		redirectAttributes.addFlashAttribute("complete", "レビューの登録が完了しました！"); // リダイレクト時のパラメータを設定する（登録完了メッセージ）
 		
@@ -190,8 +185,7 @@ public class BookReviewController {
 	public String deleteReview(@RequestParam(value="user", required=false) String user, @PathVariable Integer bookid, @PathVariable Integer reviewid, RedirectAttributes redirectAttributes, Model model) {
 		model.addAttribute("user", user); // userをModelに格納
 		
-		// Reviewを削除
-		reviewService.deleteOneById(reviewid);
+		reviewService.deleteOneById(reviewid); // idを指定してReviewを削除
 		
 		redirectAttributes.addFlashAttribute("complete", "対象レビューの削除が完了しました。"); // リダイレクト時のパラメータを設定する（登録完了メッセージ）
 		return "redirect:/book/detail/" + bookid + "?user=" + user;

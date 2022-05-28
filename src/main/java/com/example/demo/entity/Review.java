@@ -2,9 +2,7 @@ package com.example.demo.entity;
 
 import org.springframework.data.annotation.Id;
 
-//@Data
-//@NoArgsConstructor
-//@AllArgsConstructor
+// reviewテーブル用のエンティティ
 public class Review {
 	@Id
 	private Integer id; // 主キー

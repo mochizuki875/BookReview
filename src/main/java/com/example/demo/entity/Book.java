@@ -3,9 +3,6 @@ package com.example.demo.entity;
 import org.springframework.data.annotation.Id;
 
 // bookテーブル用エンティティ
-//@Data
-//@NoArgsConstructor
-//@AllArgsConstructor
 public class Book {
 	@Id
 	private Integer id; // 主キー
