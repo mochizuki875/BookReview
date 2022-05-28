@@ -27,7 +27,7 @@ public class BookReviewController {
 	ReviewService reviewService;
 	
 	static Integer topNumber = 10; // トップページの表示件数
-	static Integer pageSize = 30; // 1ページあたりの表示件数
+	static Integer pageSize = 10; // 1ページあたりの表示件数
 	
 	// ホーム画面を表示
 	@GetMapping("/")
@@ -58,7 +58,7 @@ public class BookReviewController {
 		
 		Iterable<Book> bookList = bookService.selectAllDescByPage(page, pageSize); // Book情報を取得		
 		model.addAttribute("bookList", bookList); // Modelに格納
-
+		
 		return "home";
 	}	
 	
@@ -75,9 +75,7 @@ public class BookReviewController {
 
 		Iterable<Book> bookList = bookService.searchAllDescByPage(keyword, page, pageSize); // Book情報を取得
 		model.addAttribute(bookList);
-		
-		// (バグ)この時点でbookListには1ページ分の結果しか入ってないのでこれをもとに全ページ数取るとおかしい
-		// Integer allPages = bookService.countAllPages(pageSize); // 全ページ数を取得（★もうちょい綺麗にやれそう）
+				
 		Integer allPages = bookService.countSearchAllPages(keyword, pageSize);
 		
 		model.addAttribute("allPages", allPages); // Modelに格納
@@ -90,16 +88,16 @@ public class BookReviewController {
 	
 	// 本の詳細画面表示
 	// 書籍IDをリクエストパラメータとして受け取って本の詳細ページを返す
-	@GetMapping("/book/detail/{id}")
-	public String showBook(@RequestParam(value="user", required=false) String user, @PathVariable Integer id, Model model) {
+	@GetMapping("/book/{bookid}/detail")
+	public String showBook(@RequestParam(value="user", required=false) String user, @PathVariable Integer bookid, Model model) {
 		model.addAttribute("user", user); // userをModelに格納
 		
-		Optional<Book> bookOpt = bookService.selectOneById(id); // 本の情報を取得
+		Optional<Book> bookOpt = bookService.selectOneById(bookid); // 本の情報を取得
 		if(bookOpt.isPresent()) {
 			model.addAttribute("book", bookOpt.get());
 		}
 		
-		Iterable<Review> reviewList = reviewService.selectAllByBookId(id); // 本のRVを取得
+		Iterable<Review> reviewList = reviewService.selectAllByBookId(bookid); // 本のRVを取得
 		model.addAttribute(reviewList);
 		
 		return "detail";
@@ -109,10 +107,29 @@ public class BookReviewController {
 	@GetMapping("/book/newbook")
 	public String newBook(@RequestParam(value="user", required=false) String user, Model model) {
 		model.addAttribute("user", user); // userをModelに格納
-		return "newbook";
+		
+		Boolean editFlag = false; // 編集フラグ（false:新規, true:編集）
+		model.addAttribute("editFlag", editFlag); // Modelに格納
+		
+		return "editbook";
 	}
 	
-	// 本の新規登録
+	// 本の編集画面
+	@GetMapping("/book/{bookid}/edit")
+	public String editBook(@RequestParam(value="user", required=false) String user, @PathVariable(value="bookid", required=true) Integer bookid, Model model) {
+		model.addAttribute("user", user); // userをModelに格納
+		
+		Boolean editFlag = true; // 編集フラグ（false:新規, true:編集）
+		model.addAttribute("editFlag", editFlag); // Modelに格納
+		
+		Optional<Book> bookOpt = bookService.selectOneById(bookid);
+		if(bookOpt.isPresent()) {
+			model.addAttribute("book", bookOpt.get()); // BookをModelに格納
+		}
+		return "editbook";
+	}
+	
+	// 本の情報を新規登録
 	@PostMapping("/book/insert")
 	public String insert(@RequestParam(value="user", required=false) String user, @RequestParam String title, @RequestParam String overview, Model model) {
 		model.addAttribute("user", user); // userをModelに格納
@@ -122,11 +139,33 @@ public class BookReviewController {
 		book.setOverview(overview);
 		book = bookService.insertOne(book); // Bookの新規登録
 		
-		return "redirect:/book/detail/" + book.getId() + "?user=" + user; // 登録したBookの詳細ページを返す
+		return "redirect:/book/" + book.getId() + "/detail/?user=" + user; // 登録したBookの詳細ページを返す
+	}
+	
+	// 本の情報を更新
+	@PostMapping("/book/{bookid}/update")
+	public String update(@RequestParam(value="user", required=false) String user, @RequestParam String title, @RequestParam String overview, @PathVariable(value="bookid", required=true) Integer bookid, Model model) {
+		model.addAttribute("user", user); // userをModelに格納
+		
+		Book book = new Book();
+		Optional<Book> bookOpt = bookService.selectOneById(bookid);
+		if(bookOpt.isPresent()) {
+			book = bookOpt.get();
+			book.setTitle(title);
+			book.setOverview(overview);
+			book = bookService.updateOne(book); // Bookの新規登録
+		}
+
+		
+		// デバッグ
+		System.out.println("bookid:" + bookid + " title:" + title + " overview:" + overview);
+		
+		
+		return "redirect:/book/" + book.getId() + "/detail?user=" + user; // 登録したBookの詳細ページを返す
 	}
 	
 	// 本の削除
-	@PostMapping("/book/delete/{bookid}")
+	@PostMapping("/book/{bookid}/delete")
 	public String deleteReview(@RequestParam(value="user", required=false) String user, @PathVariable Integer bookid, RedirectAttributes redirectAttributes, Model model) {
 		model.addAttribute("user", user); // userをModelに格納
 		
@@ -138,12 +177,12 @@ public class BookReviewController {
 	}
 
 	// RVの新規登録画面
-	@GetMapping("/book/{id}/newreview")
-	public String newReview(@RequestParam(value="user", required=false) String user, @PathVariable Integer id, Model model) { // リクエストパラメーターでbookid欲しい
+	@GetMapping("/book/{bookid}/newreview")
+	public String newReview(@RequestParam(value="user", required=false) String user, @PathVariable Integer bookid, Model model) {
 		model.addAttribute("user", user); // userをModelに格納
-		model.addAttribute("bookid", id); // BookのidをModelに格納
+		model.addAttribute("bookid", bookid); // BookのidをModelに格納
 		
-		Optional<Book> bookOpt = bookService.selectOneById(id); // idをベースにBookを取得
+		Optional<Book> bookOpt = bookService.selectOneById(bookid); // idをベースにBookを取得
 		if(bookOpt.isPresent()) {
 			model.addAttribute("book", bookOpt.get()); // BookをModelに格納
 		}
@@ -177,7 +216,7 @@ public class BookReviewController {
 		
 		redirectAttributes.addFlashAttribute("complete", "レビューの登録が完了しました！"); // リダイレクト時のパラメータを設定する（登録完了メッセージ）
 		
-		return "redirect:/book/detail/" + bookid + "?user=" + user;
+		return "redirect:/book/" + bookid + "/detail?user=" + user;
 	}
 	
 	// RVの削除
@@ -188,7 +227,7 @@ public class BookReviewController {
 		reviewService.deleteOneById(reviewid); // idを指定してReviewを削除
 		
 		redirectAttributes.addFlashAttribute("complete", "対象レビューの削除が完了しました。"); // リダイレクト時のパラメータを設定する（登録完了メッセージ）
-		return "redirect:/book/detail/" + bookid + "?user=" + user;
+		return "redirect:/book/" + bookid + "/detail?user=" + user;
 	}
 	
 }

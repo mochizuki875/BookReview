@@ -60,6 +60,12 @@ public class BookServiceImpl implements BookService {
 	}
 	
 	@Override
+	public Book updateOne(Book book) {
+		book = bookRepository.save(book);
+		return book;
+	}
+	
+	@Override
 	public void updateTotalevaluationById(Integer id, Double totalevaluation) {
 		bookRepository.updateTotalevaluationById(id, totalevaluation);
 	}

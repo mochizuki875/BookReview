@@ -32,6 +32,9 @@ public interface BookService {
 	// Bookを1件登録して登録されたBookを返す
 	Book insertOne(Book book);
 	
+	// Bookを1件更新して更新されたBookを返す
+	Book updateOne(Book book);
+	
 	// Bookのtotalevaluationを更新
 	void updateTotalevaluationById(Integer id, Double totalevaluation);
 	
