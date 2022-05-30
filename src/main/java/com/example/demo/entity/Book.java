@@ -1,13 +1,20 @@
 package com.example.demo.entity;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
 // bookテーブル用エンティティ
+@Table("book")
 public class Book {
 	@Id
+	@Column("id")
 	private Integer id; // 主キー
+	@Column("title")
 	private String title; // 本のタイトル
+	@Column("overview")
 	private String overview; // 本の概要
+	@Column("totalevaluation")
 	private Double totalevaluation; // 本の総合評価
 	
 	public Book() {

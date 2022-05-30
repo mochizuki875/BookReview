@@ -22,7 +22,7 @@
 			</div>
 		</div>
 				
-		<!-- 書籍情報の新規登録 -->		
+		<!-- 書籍情報の新規登録 -->	
 		<form method="GET" th:action="@{/book/newbook(user=${user})}">
 			<input type="hidden" name="user" th:value="${user}">
 			<button type="submit" class="btn btn-primary">新しい本を登録する</button> <!-- リクエストパラメータとしてuserを送る -->
@@ -226,6 +226,7 @@
 							<!-- 最終ページへのリンク -->
 							<li class="page-item">
 								<!-- keywordなしの場合は全件取得ページリンク -->
+								
 								<a class="page-link" th:if='${!(page==allPages) && keyword==null}' th:href="@{/book(user=${user}, page=${allPages})}">&raquo;</a>
 								<span class="page-link" th:if='${page==allPages && keyword==null}'>&raquo;</span>
 								<!-- keywordありの場合は検索結果へのページリンク -->
