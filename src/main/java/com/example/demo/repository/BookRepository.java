@@ -15,27 +15,27 @@ public interface BookRepository extends CrudRepository<Book, Integer> {
 	
 	// totalevaluationが上位n件のBookを取得する 
 	@Query("SELECT * FROM book ORDER BY totalevaluation DESC, id ASC LIMIT :n;")
-	Iterable<Book> selectTopN(@Param("n") Integer n);
+	Iterable<Book> selectTopN(@Param("n") int n);
 	
 	// レコード数を取得する
 	@Query("SELECT COUNT(*) FROM book;")
-	Integer countAll();
+	int countAll();
 
 	// totalevaluationが高い順にBookをoffset付きでlimit件取得
 	@Query("SELECT * FROM (SELECT * FROM book ORDER BY totalevaluation DESC, id ASC) selectAllDesc LIMIT :limit OFFSET :offset;")
-	Iterable<Book> selectAllDescByLimitOffset(@Param("limit") Integer limit, @Param("offset") Integer offset);
+	Iterable<Book> selectAllDescByLimitOffset(@Param("limit") int limit, @Param("offset") int offset);
 
 	// keywordでBook titleを検索しtotalevaluationが高い順にBookをoffset付きでlimit件取得
 	@Query("SELECT * FROM (SELECT * FROM book WHERE title ILIKE '%' || :keyword || '%' ORDER BY totalevaluation DESC, id ASC) selectAllDesc LIMIT :limit OFFSET :offset;")
-	Iterable<Book> searchAllDescByLimitOffset(@Param("keyword") String keyword, @Param("limit") Integer limit, @Param("offset") Integer offset);	
+	Iterable<Book> searchAllDescByLimitOffset(@Param("keyword") String keyword, @Param("limit") int limit, @Param("offset") int offset);	
 	
 	// keword検索にヒットしたBook件数を取得
 	@Query("SELECT COUNT(*) FROM book WHERE title ILIKE '%' || :keyword || '%';")
-	Integer countSearchAll(@Param("keyword") String keyword);
+	int countSearchAll(@Param("keyword") String keyword);
 	
 	// Bookのidを指定してtotalevaluationを更新する
 	// DML系クエリを実行する際は@Modifyingが必要
 	@Modifying
 	@Query("UPDATE book SET totalevaluation = :totalevaluation WHERE id = :id;")
-	void updateTotalevaluationById(@Param("id") Integer id, @Param("totalevaluation") Double totalevaluation);
+	void updateTotalevaluationById(@Param("id") int id, @Param("totalevaluation") double totalevaluation);
 }

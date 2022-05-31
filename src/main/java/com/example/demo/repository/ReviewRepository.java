@@ -12,11 +12,11 @@ public interface ReviewRepository extends CrudRepository<Review, Integer> {
 	// 独自で使用したいメソッドを定義
 	// 本のIDを指定してRVを全件取得
 	@Query("SELECT * FROM review WHERE bookid= :bookid;")
-	Iterable<Review> findAllByBookid(@Param("bookid") Integer bookid);
+	Iterable<Review> findAllByBookid(@Param("bookid") int bookid);
 	
 	// 本のIDを指定してRVを全件削除
 	// DML系クエリを実行する際は@Modifyingが必要
 	@Modifying
 	@Query("DELETE FROM review WHERE bookid= :bookid;")
-	void deleteAllByBookid(@Param("bookid") Integer bookid);
+	void deleteAllByBookid(@Param("bookid") int bookid);
 }

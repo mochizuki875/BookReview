@@ -9,29 +9,29 @@ import org.springframework.data.relational.core.mapping.Table;
 public class Book {
 	@Id
 	@Column("id")
-	private Integer id; // 主キー
+	private int id; // 主キー
 	@Column("title")
 	private String title; // 本のタイトル
 	@Column("overview")
 	private String overview; // 本の概要
 	@Column("totalevaluation")
-	private Double totalevaluation; // 本の総合評価
+	private double totalevaluation; // 本の総合評価
 	
 	public Book() {
 	}
 	
-	public Book(Integer id, String title, String overview, Double totalevaluation) {
+	public Book(int id, String title, String overview, double totalevaluation) {
 		this.id = id;
 		this.title = title;
 		this.overview = overview;
 		this.totalevaluation = totalevaluation;
 	}
 	
-	public Integer getId() {
+	public int getId() {
 		return id;
 	}
 	
-	public void setId(Integer id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 	
@@ -50,11 +50,11 @@ public class Book {
 		this.overview = overview;
 	}
 	
-	public Double getTotalevaluation() {
+	public double getTotalevaluation() {
 		return totalevaluation;
 	}
 	
-	public void setTotalevaluation(Double totalevaluation) {
+	public void setTotalevaluation(double totalevaluation) {
 		this.totalevaluation = totalevaluation;
 	}
 	

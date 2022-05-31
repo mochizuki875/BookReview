@@ -42,8 +42,7 @@
 					<textarea class="form-control" rows="5" cols="50" name="overview" th:text="${book.overview}" placeholder="本の概要を入力してください。"></textarea><br>
 				</th:block>
 			</div>	
-			<!-- 隠しフィールドとしてuserを渡す -->
-			<input type="hidden" name="user" th:value="${user}">
+			<input type="hidden" name="user" th:value="${user}"> <!-- 隠しフィールドとしてuserを渡す -->
 			<th:block th:unless="${editFlag}">
 				<button type="submit" class="btn btn-primary">登録</button>
 			</th:block>

@@ -11,23 +11,23 @@ public interface BookService {
 	Iterable<Book> selectAll();
 	
 	// 上位n件のbookを取得
-	Iterable<Book> selectTopN(Integer n);
+	Iterable<Book> selectTopN(int n);
 	
 	// Bookをoffset単位で分割表示する際のページ数を取得
-	Integer countAllPages(Integer offset);
+	int countAllPages(int offset);
 	
 	// 登録されている全Bookをlimit単位でページ分割し指定したpageに含まれるBook一覧を取得
-	Iterable<Book> selectAllDescByPage(Integer page, Integer limit);
+	Iterable<Book> selectAllDescByPage(int page, int limit);
 	
 	// Bookを1件取得
-	Optional<Book> selectOneById(Integer id);
+	Optional<Book> selectOneById(int id);
 	
 	// 登録されている全Bookをkeywordで検索した結果をlimit単位でページ分割し指定したpageに含まれるBook一覧を取得
 	// Iterable<Book> searchAll(String keyword);
-	Iterable<Book> searchAllDescByPage(String keyword, Integer page, Integer limit);
+	Iterable<Book> searchAllDescByPage(String keyword, int page, int limit);
 	
 	// // Bookのkeyword検索結果をoffset単位で分割表示する際のページ数を取得
-	Integer countSearchAllPages(String keyword, Integer offset);
+	int countSearchAllPages(String keyword, int offset);
 	
 	// Bookを1件登録して登録されたBookを返す
 	Book insertOne(Book book);
@@ -36,10 +36,10 @@ public interface BookService {
 	Book updateOne(Book book);
 	
 	// Bookのtotalevaluationを更新
-	void updateTotalevaluationById(Integer id, Double totalevaluation);
+	void updateTotalevaluationById(int id, double totalevaluation);
 	
 	// Bookの削除
-	void deleteOneById(Integer id);
+	void deleteOneById(int id);
 
 
 

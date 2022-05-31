@@ -23,32 +23,32 @@ public class BookServiceImpl implements BookService {
 	}
 
 	@Override
-	public Iterable<Book> selectTopN(Integer n) {
+	public Iterable<Book> selectTopN(int n) {
 		return bookRepository.selectTopN(n);
 	}
 	
 	@Override
-	public Integer countAllPages(Integer offset) {
+	public int countAllPages(int offset) {
 		return (int)Math.ceil((double)bookRepository.countAll() / offset);
 	}
 	
 //	@Override
-	public Iterable<Book> selectAllDescByPage(Integer page, Integer limit) {
+	public Iterable<Book> selectAllDescByPage(int page, int limit) {
 		return bookRepository.selectAllDescByLimitOffset(limit, limit*(page-1));
 	}
 
 	@Override
-	public Optional<Book> selectOneById(Integer id) {
+	public Optional<Book> selectOneById(int id) {
 		return bookRepository.findById(id);
 	}
 
 	@Override
-	public Iterable<Book> searchAllDescByPage(String keyword, Integer page, Integer limit){
+	public Iterable<Book> searchAllDescByPage(String keyword, int page, int limit){
 		return bookRepository.searchAllDescByLimitOffset(keyword, limit, limit*(page-1));
 	}	
 	
 	@Override
-	public Integer countSearchAllPages(String keyword, Integer offset) {
+	public int countSearchAllPages(String keyword, int offset) {
 		return (int)Math.ceil((double)bookRepository.countSearchAll(keyword) / offset);
 	}
 	
@@ -66,12 +66,12 @@ public class BookServiceImpl implements BookService {
 	}
 	
 	@Override
-	public void updateTotalevaluationById(Integer id, Double totalevaluation) {
+	public void updateTotalevaluationById(int id, double totalevaluation) {
 		bookRepository.updateTotalevaluationById(id, totalevaluation);
 	}
 	
 	@Override
-	public void deleteOneById(Integer id) {
+	public void deleteOneById(int id) {
 		bookRepository.deleteById(id);
 	}
 	

@@ -18,13 +18,13 @@ public class ReviewServiceImpl implements ReviewService {
 	
 	// RVのIDを指定してRVを1件取得
 	@Override
-	public Optional<Review> selectOneById(Integer id){
+	public Optional<Review> selectOneById(int id){
 		return reviewRepository.findById(id);
 	}
 	
 	// RVのIDを指定してRVを1件削除
 	@Override
-	public void deleteOneById(Integer id) {
+	public void deleteOneById(int id) {
 		reviewRepository.deleteById(id);
 	}
 	
@@ -36,13 +36,13 @@ public class ReviewServiceImpl implements ReviewService {
 	
 	// 本のIDを指定してRVを全件取得
 	@Override
-	public Iterable<Review> selectAllByBookId(Integer bookid){
+	public Iterable<Review> selectAllByBookId(int bookid){
 	    return reviewRepository.findAllByBookid(bookid);
 	}
 	
 	// 本のIDを指定してRVを全件削除（本のIDに紐付くもの全て）
 	@Override
-	public void deleteAllByBookId(Integer bookid) {
+	public void deleteAllByBookId(int bookid) {
 		reviewRepository.deleteAllByBookid(bookid);
 	}
 	

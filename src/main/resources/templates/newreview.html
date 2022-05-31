@@ -18,7 +18,7 @@
 		<form method="POST" th:action="@{/review/insert}">
 			<div class="col-md-1">
 				<label class="form-label" for="evaluation">評価</label><br>
-				<!-- <input class="form-control" type="number" name="evaluation" min="1" max="5" value="3"> -->
+				<!-- Star Rating -->
 				<input class="rating rating-loading" name="evaluation" value="3" data-show-clear="false" data-show-caption="false" data-min="0" data-max="5" data-step="1" data-size="xs">
 			</div>
 			<div class="col-md-6">
@@ -26,11 +26,9 @@
 				<textarea class="form-control"  rows="5" cols="50" name="content" placeholder="本の概要を入力してください。"></textarea><br>
 			</div>
 			<div>
-				<!-- 隠しフィールドとしてbookidを渡す -->
-				<input type="hidden" name="bookid" th:value="${bookid}">
+				<input type="hidden" name="bookid" th:value="${bookid}"> <!-- 隠しフィールドとしてbookidを渡す -->
 			</div>
-			<!-- 隠しフィールドとしてuserを渡す -->
-			<input type="hidden" name="user" th:value="${user}">
+			<input type="hidden" name="user" th:value="${user}"> <!-- 隠しフィールドとしてuserを渡す -->
 			<button type="submit" class="btn btn-primary">登録</button>
 		</form>
 	</div>

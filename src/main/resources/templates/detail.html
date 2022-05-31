@@ -20,13 +20,13 @@
 		<!-- 編集ボタン -->
 		<form class="row" method="GET" th:action="@{/book/{bookid}/edit(bookid=${book.id})}"> <!-- {bookid}に(bookid=)を代入 -->
 			<div class="d-grid gap-2 d-md-flex justify-content-md-end">
-				<input type="hidden" name="user" th:value="${user}">
+				<input type="hidden" name="user" th:value="${user}"> <!-- 隠しフィールドとしてuserを設定しリクエストパラメータとして送信 -->
 				<button class="btn btn-primary" type="submit">編集</button>
 			</div>
 		</form>
 	</div>
 	
-	<!-- 本の詳細表示（本の情報を表示できなければエラーにしたい） -->
+	<!-- 本の詳細表示 -->
 	<div class="container-fluid pt-3">	
 		<table class="table table-bordered table-responsive">
 			<thead>
@@ -54,46 +54,49 @@
 		<h2 align="center">この本を読んだ人からのレビュー</h2>
 		
 		<!-- 登録完了コメント -->
-		<p th:if="${complete}" th:text="${complete}" style="color:blue"></p>
-		
+		<th:block th:if="${complete}">
+			<p th:text="${complete}" style="color:blue"></p>
+		</th:block>
 		<!-- RV登録ボタン -->
 		<form class="row" method="GET" th:action="@{/book/{bookid}/newreview(bookid=${book.id})}"> <!-- {bookid}に(bookid=)を代入 -->
 			<div class="d-grid gap-2 d-md-flex justify-content-md-end">
-				<input type="hidden" name="user" th:value="${user}">
+				<input type="hidden" name="user" th:value="${user}"> <!-- 隠しフィールドとしてuserを設定しリクエストパラメータとして送信 -->
 				<button class="btn btn-primary" type="submit">RV登録</button>
 			</div>
 		</form>
 	</div>
 	
 	<div class="container-fluid pt-3">
-		<table class="table table-bordered table-responsive" th:unless="${#lists.isEmpty(reviewList)}">
-			<thead>
-				<tr class="text-center table-primary">
-					<th width="700">レビュー</th>
-					<th width="150">評価</th>
-					<th class="table-secondary" width="150" th:if="${user} == 'admin'">操作</th>
-				</tr>
-			</thead>
-			<tbody>	
-				<tr th:each="obj : ${reviewList}">
-					<td th:text="${obj.content}">レビュー内容</td>
-					<!-- 評価をスター表示 -->
-					<td class="text-center">
-						<div class="row">
+		<th:block th:unless="${#lists.isEmpty(reviewList)}">
+			<table class="table table-bordered table-responsive">
+				<thead>
+					<tr class="text-center table-primary">
+						<th width="700">レビュー</th>
+						<th width="150">評価</th>
+						<th:block th:if="${user} == 'admin'">
+							<th class="table-secondary" width="150">操作</th>
+						</th:block>
+					</tr>
+				</thead>
+				<tbody>	
+					<tr th:each="obj : ${reviewList}">
+						<td th:text="${obj.content}">レビュー内容</td>
+						<!-- 評価をスター表示 -->
+						<td class="text-center">
 							<input class="show-rating rating-loading" name="rate" th:value="${obj.evaluation}">
-							<!-- <label class="col" th:text="'(' + ${obj.evaluation} + ')'"></label> -->
-						</div>
-					</td>
-					<!-- RV削除ボタン -->
-					<td th:if="${user} == 'admin'" align="center">
-						<form method="POST" th:action="@{/book/detail/{bookid}/delete/{reviewid}(bookid=${obj.bookid}, reviewid=${obj.id})}"> <!-- {id}に(id=)を代入 -->
-							<input type="hidden" name="_method" value="DELETE"> <!-- DELETEメソッドを隠しフィールドで送る -->
-							<button type="submit" class="btn btn-secondary" th:name="user" th:value="${user}">RV削除</button>
-						</form>
-					</td>
-				</tr>
-			</tbody>
-		</table>
+						</td>
+						<!-- RV削除ボタン -->
+						<td th:if="${user} == 'admin'" align="center">
+							<form method="POST" th:action="@{/book/detail/{bookid}/delete/{reviewid}(bookid=${obj.bookid}, reviewid=${obj.id})}"> <!-- {id}に(id=)を代入 -->
+								<input type="hidden" name="_method" value="DELETE"> <!-- DELETEメソッドを隠しフィールドで送る -->
+								<input type="hidden" name="user" th:value="${user}"> <!-- 隠しフィールドとしてuserを設定しリクエストパラメータとして送信 -->
+								<button type="submit" class="btn btn-secondary">RV削除</button>
+							</form>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</th:block>
 	</div>
 	<!-- レビューが取得できなければメッセージを表示 -->
 	<p th:if="${#lists.isEmpty(reviewList)}">まだ登録されているレビューはありません</p>

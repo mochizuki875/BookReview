@@ -15,7 +15,7 @@
 				<div class="col-md-5">
 					<form method="GET" class="d-flex" th:action="@{/book/search}">
 						<input class="form-control me-2 text-center" type="search" name="keyword" placeholder="Search Book..." aria-label="Search" th:value="${keyword}">
-						<input type="hidden" name="user" th:value="${user}">
+						<input type="hidden" name="user" th:value="${user}"> <!-- 隠しフィールドとしてuserを設定しリクエストパラメータとして送信 -->
 						<button class="btn btn-success" type="submit">Search</button>
 					</form>
 				</div>
@@ -24,8 +24,8 @@
 				
 		<!-- 書籍情報の新規登録 -->	
 		<form method="GET" th:action="@{/book/newbook(user=${user})}">
-			<input type="hidden" name="user" th:value="${user}">
-			<button type="submit" class="btn btn-primary">新しい本を登録する</button> <!-- リクエストパラメータとしてuserを送る -->
+			<input type="hidden" name="user" th:value="${user}"> <!-- 隠しフィールドとしてuserを設定しリクエストパラメータとして送信 -->
+			<button type="submit" class="btn btn-primary">新しい本を登録する</button>
 		</form>
 	</div>
 
@@ -34,16 +34,20 @@
 		<div class="row">
 			<div class="d-grid gap-2 d-md-flex justify-content-md-end">
 				<!-- 上位5件表示 -->
-				<form method="GET" th:action="@{/}" th:unless="${showFlag} == 0">
-				<input type="hidden" name="user" th:value="${user}">
-						<button class="btn btn-outline-success" type="submit">人気の本を表示</button>
-				</form>
+				<th:block th:unless="${showFlag} == 0">
+					<form method="GET" th:action="@{/}">
+					<input type="hidden" name="user" th:value="${user}">
+							<button class="btn btn-outline-success" type="submit">人気の本を表示</button>
+					</form>
+				</th:block>
 				<!-- 全件表示 -->
-				<form method="GET" th:action="@{/book}" th:unless="${showFlag} == 1">
-						<input type="hidden" name="user" th:value="${user}">
-						<input type="hidden" name="page" th:value="1">
-						<button class="btn btn-outline-secondary" type="submit">全ての本を表示</button>
-				</form>
+				<th:block th:unless="${showFlag} == 1">
+					<form method="GET" th:action="@{/book}">
+							<input type="hidden" name="user" th:value="${user}">
+							<input type="hidden" name="page" th:value="1">
+							<button class="btn btn-outline-secondary" type="submit">全ての本を表示</button>
+					</form>
+				</th:block>
 			</div>
 		</div>
 	</div>
@@ -52,20 +56,22 @@
 	<th:block th:unless="${#lists.isEmpty(bookList)}">
 		<!-- BookReviewControllerにてModelに格納したlistをユーティリティーオブジェクトを使ってチェックしている -->
 		<div class="container-fluid pt-3">
-			<div class="col">
+			<div class="row">
 				<!-- 登録/更新完了コメント -->
 				<!-- ${complete}はinsertメソッドからRedirectパラメーターとして渡される -->
-				<p th:if="${complete}" th:text="${complete}" style="color:blue"></p>
+				<th:block th:if="${complete}">
+					<p  th:text="${complete}" style="color:blue"></p>
+				</th:block>
 				<!-- 表示する書籍の件数を表示（未実装） -->
 				<!-- <p th:if="${bookListSize}" th:text="${bookListSize} + '件の書籍が見つかりました。'"></p> -->
 			</div>
-		
+			<!-- 書籍情報を一覧で表示 -->
 			<table class="table table-bordered table-striped table-hover table-responsive">
 				<thead>
 					<tr class="text-center table-primary">
 						<th scope="col" style="width: 50%">書籍名</th>
 						<th scope="col" style="width: 20%">評価</th>
-						<th scope="rol" colspan="3" style="width: 30%">各種操作</th>
+						<th scope="col" colspan="3" style="width: 30%">各種操作</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -78,25 +84,25 @@
 								<label class="col" th:text="'(' + ${obj.totalevaluation} + ')'"></label>
 							</div>
 						</td>
-						<!-- RV登録ボタン -->
-						<td class="text-center">
-							<form method="GET" th:action="@{/book/{bookid}/newreview(bookid=${obj.id})}"><!-- {bookid}に(bookid=)を代入 -->
-								<input type="hidden" name="user" th:value="${user}">
-								<button type="submit" class="btn btn-primary">RV登録</button>
-							</form>
-						</td>
 						<!-- 詳細ボタン -->
 						<td class="text-center">
 							<form method="GET" th:action="@{/book/{bookid}/detail(bookid=${obj.id})}"> <!-- {bookid}に(bookid=)を代入 -->
-								<input type="hidden" name="user" th:value="${user}">
-								<button type="submit" class="btn btn-primary">詳細</button> <!-- リクエストパラメータとしてuserを送る -->
+								<input type="hidden" name="user" th:value="${user}"> <!-- 隠しフィールドとしてuserを設定しリクエストパラメータとして送信 -->
+								<button type="submit" class="btn btn-primary">詳細</button>
+							</form>
+						</td>
+						<!-- RV登録ボタン -->
+						<td class="text-center">
+							<form method="GET" th:action="@{/book/{bookid}/newreview(bookid=${obj.id})}"> <!-- {bookid}に(bookid=)を代入 -->
+								<input type="hidden" name="user" th:value="${user}"> <!-- 隠しフィールドとしてuserを設定しリクエストパラメータとして送信 -->
+								<button type="submit" class="btn btn-primary">RV登録</button>
 							</form>
 						</td>
 						<!-- 削除ボタン -->
 						<td th:if="${user} == 'admin'" align="center">
 							<form method="POST" th:action="@{/book/{bookid}/delete(bookid=${obj.id})}"> <!-- {bookid}に(bookid=)を代入 -->
-								<input type="hidden" name="_method" value="DELETE"> <!-- DELETEメソッドを隠しフィールドで送る -->
-								<input type="hidden" name="user" th:value="${user}"> <!-- 隠しフィールドとしてuserを渡す -->
+								<input type="hidden" name="_method" value="DELETE"> <!-- DELETEメソッドを隠しフィールドで送信 -->
+								<input type="hidden" name="user" th:value="${user}"> <!-- 隠しフィールドとしてuserを設定しリクエストパラメータとして送信 -->
 								<button type="submit" class="btn btn-secondary">削除</button>
 							</form>
 						</td>
@@ -105,137 +111,176 @@
 			</table>
 		</div>
 		
-		<!-- ページング -->
+		<!-- ページネーション https://getbootstrap.jp/docs/5.0/components/pagination/ -->
 		<div class="container-fluid">
-			<div class="row" th:unless="${showFlag} == 0">
-				<div class="d-grid gap-2 d-md-flex justify-content-md-end">
-					<nav aria-label="Page navigation book">
-						<ul class="pagination">
-						
-							<!-- 先頭ページへのリンク -->
-							<li class="page-item">
-						     	<!-- keywordなしの場合は全件取得ページリンク -->
-								<a class="page-link" th:if='${!(page==1) && keyword==null}' th:href="@{/book(user=${user}, page=1)}">&laquo;</a>
-								<span class="page-link" th:if='${page==1 && keyword==null}'>&laquo;</span>
-								<!-- keywordありの場合は検索結果へのページリンク -->
-								<a class="page-link" th:if='${!(page==1) && !(keyword==null)}' th:href="@{/book/search(user=${user}, keyword=${keyword}, page=1)}">&laquo;</a>
-								<span class="page-link" th:if='${page==1 && !(keyword==null)}'>&laquo;</span>    
-						    </li>
-						    	    
-						    <!-- 各ページへのリンクを表示 -->
-							<!-- 全ページ数が7ページ以下の場合は全て表示 -->
-							<th:block th:if="${allPages lt 7}">
-								<li th:class="(${i}==${page})? 'page-item active' : 'page-item'" th:each='i : ${#numbers.sequence(1, allPages)}'>	
-									<!-- 現在表示しているページはspan -->
-									<span class="page-link" th:if='${i}==${page}' th:text='${i}'>1
-										<span class="sr-only">(current)</span>
-									</span>
-									<!-- 現在表示している以外のページはリンクを表示 -->
-									<!-- keywordなしの場合は全件取得ページリンク -->
-									<a class="page-link" th:if='${!(i==page) && keyword==null}' th:href="@{/book(user=${user}, page=${i})}">
-										<span th:text='${i}'>1</span>
-									</a>
+			<div class="row">
+				<th:block th:unless="${showFlag} == 0">
+					<div class="d-grid gap-2 d-md-flex justify-content-md-end">
+						<nav aria-label="Page navigation book">
+							<ul class="pagination">
+								<!-- 先頭ページへのリンク -->
+								<li class="page-item">
+							     	<!-- keywordなしの場合は全件取得ページリンク -->
+							     	<th:block th:if="${!(page==1) && keyword==null}">
+										<a class="page-link" th:href="@{/book(user=${user}, page=1)}">&laquo;</a>
+									</th:block>
+									<th:block th:if="${page==1 && keyword==null}">
+										<span class="page-link">&laquo;</span>
+									</th:block>
 									<!-- keywordありの場合は検索結果へのページリンク -->
-									<a class="page-link" th:if='${!(i==page) && !(keyword==null)}' th:href="@{/book/search(user=${user}, keyword=${keyword}, page=${i})}">
-										<span th:text='${i}'>1</span>
-									</a>
-								</li>
-							</th:block>
-							
-							<!-- 全ページ数が7ページ以上の場合は前後3ページ（合計7ページ）のみ表示 -->
-							<th:block th:if="${allPages ge 7}">
-							
-								<!-- 現在のページが先頭ページから3ページ以内の場合 -->
-								<th:block th:if="${page le 3}">
-									<li th:class="(${i}==${page})? 'page-item active' : 'page-item'" th:each='i : ${#numbers.sequence(1, page+3)}'>
+									<th:block th:if="${!(page==1) && !(keyword==null)}">
+										<a class="page-link" th:href="@{/book/search(user=${user}, keyword=${keyword}, page=1)}">&laquo;</a>
+									</th:block>
+									<th:block th:if="${page==1 && !(keyword==null)}">
+										<span class="page-link">&laquo;</span>
+									</th:block>
+							    </li>
+							    	    
+							    <!-- 各ページへのリンクを表示 -->
+								<!-- 全ページ数が7ページ以下の場合は全て表示 -->
+								<th:block th:if="${allPages lt 7}">
+									<li th:class="(${i}==${page})? 'page-item active' : 'page-item'" th:each="i : ${#numbers.sequence(1, allPages)}">	
 										<!-- 現在表示しているページはspan -->
-										<span class="page-link" th:if='${i}==${page}' th:text='${i}'>1
-											<span class="sr-only">(current)</span>
-										</span>
+										<th:block th:if="${i}==${page}">
+											<span class="page-link" th:text='${i}'>1
+												<span class="sr-only">(current)</span>
+											</span>
+										</th:block>
 										<!-- 現在表示している以外のページはリンクを表示 -->
 										<!-- keywordなしの場合は全件取得ページリンク -->
-										<a class="page-link" th:if='${!(i==page) && keyword==null}' th:href="@{/book(user=${user}, page=${i})}">
-											<span th:text='${i}'>1</span>
-										</a>
+										<th:block th:if="${!(i==page) && keyword==null}">
+											<a class="page-link" th:href="@{/book(user=${user}, page=${i})}">
+												<span th:text="${i}">1</span>
+											</a>
+										</th:block>
 										<!-- keywordありの場合は検索結果へのページリンク -->
-										<a class="page-link" th:if='${!(i==page) && !(keyword==null)}' th:href="@{/book/search(user=${user}, keyword=${keyword}, page=${i})}">
-											<span th:text='${i}'>1</span>
-										</a>
-									</li>
-									<li class="page-item">
-										<a class="page-link">
-											<span th:text='...'>...</span>
-										</a>
+										<th:block th:if="${!(i==page) && !(keyword==null)}">
+											<a class="page-link" th:href="@{/book/search(user=${user}, keyword=${keyword}, page=${i})}">
+												<span th:text="${i}">1</span>
+											</a>
+										</th:block>
 									</li>
 								</th:block>
 								
-								<!-- 現在のページが最終ページから3ページ以内の場合 -->
-								<th:block th:if="${allPages-3 lt page}">
-									<li class="page-item">
-										<a class="page-link">
-											<span th:text='...'>...</span>
-										</a>
-									</li>
-									<li th:class="(${i}==${page})? 'page-item active' : 'page-item'" th:each='i : ${#numbers.sequence(page-3, allPages)}'>
-										<!-- 現在表示しているページはspan -->
-										<span class="page-link" th:if='${i}==${page}' th:text='${i}'>1
-											<span class="sr-only">(current)</span>
-										</span>
-										<!-- 現在表示している以外のページはリンクを表示 -->
-										<!-- keywordなしの場合は全件取得ページリンク -->
-										<a class="page-link" th:if='${!(i==page) && keyword==null}' th:href="@{/book(user=${user}, page=${i})}">
-											<span th:text='${i}'>1</span>
-										</a>
-										<!-- keywordありの場合は検索結果へのページリンク -->
-										<a class="page-link" th:if="${!(i==page) && !(keyword==null)}" th:href="@{/book/search(user=${user}, keyword=${keyword}, page=${i})}">
-											<span th:text='${i}'>1</span>
-										</a>
-									</li>
-								</th:block>
-								
-								<!-- 現在のページが前後3ページ以外の場合 -->
-								<th:block th:if="${3 lt page && page le allPages-3}" >
-									<li class="page-item">
-										<a class="page-link">
-											<span th:text='...'>...</span>
-										</a>
-									</li>
-									<li th:class="(${i}==${page})? 'page-item active' : 'page-item'" th:each='i : ${#numbers.sequence(page-3, page+3)}'>	
-										<!-- 現在表示しているページはspan -->
-										<span class="page-link" th:if='${i}==${page}' th:text='${i}'>1
-											<span class="sr-only">(current)</span>
-										</span>
-										<!-- 現在表示している以外のページはリンクを表示 -->
-										<!-- keywordなしの場合は全件取得ページリンク -->
-										<a class="page-link" th:if='${!(i==page) && keyword==null}' th:href="@{/book(user=${user}, page=${i})}">
-											<span th:text='${i}'>1</span>
-										</a>
-										<!-- keywordありの場合は検索結果へのページリンク -->
-										<a class="page-link" th:if='${!(i==page) && !(keyword==null)}' th:href="@{/book/search(user=${user}, keyword=${keyword}, page=${i})}">
-												<span th:text='${i}'>1</span>
-										</a>
-									</li>
-									<li class="page-item">
-										<a class="page-link">
-											<span th:text='...'>...</span>
-										</a>
-									</li>
-								</th:block>
-							</th:block>
+								<!-- 全ページ数が7ページ以上の場合は前後3ページ（合計7ページ）のみ表示 -->
+								<th:block th:if="${allPages ge 7}">
+									<!-- 現在のページが先頭ページから3ページ以内の場合 -->
+									<th:block th:if="${page le 3}">
+										<li th:class="(${i}==${page})? 'page-item active' : 'page-item'" th:each="i : ${#numbers.sequence(1, page+3)}">
+											<!-- 現在表示しているページはspan -->
+											<th:block th:if="${i}==${page}">
+												<span class="page-link" th:text='${i}'>1
+													<span class="sr-only">(current)</span>
+												</span>
+											</th:block>
+											<!-- 現在表示している以外のページはリンクを表示 -->
+											<!-- keywordなしの場合は全件取得ページリンク -->
+											<th:block th:if="${!(i==page) && keyword==null}">
+												<a class="page-link" th:href="@{/book(user=${user}, page=${i})}">
+													<span th:text="${i}">1</span>
+												</a>
+											</th:block>
+											<!-- keywordありの場合は検索結果へのページリンク -->
+											<th:block th:if="${!(i==page) && !(keyword==null)}">
+												<a class="page-link" th:href="@{/book/search(user=${user}, keyword=${keyword}, page=${i})}">
+													<span th:text="${i}">1</span>
+												</a>
+											</th:block>
+										</li>
+										<li class="page-item">
+											<a class="page-link">
+												<span th:text="...">...</span>
+											</a>
+										</li>
+									</th:block>
 									
-							<!-- 最終ページへのリンク -->
-							<li class="page-item">
-								<!-- keywordなしの場合は全件取得ページリンク -->
-								
-								<a class="page-link" th:if='${!(page==allPages) && keyword==null}' th:href="@{/book(user=${user}, page=${allPages})}">&raquo;</a>
-								<span class="page-link" th:if='${page==allPages && keyword==null}'>&raquo;</span>
-								<!-- keywordありの場合は検索結果へのページリンク -->
-								<a class="page-link" th:if='${!(page==allPages) && !(keyword==null)}' th:href="@{/book/search(user=${user}, keyword=${keyword}, page=${allPages})}">&raquo;</a>
-								<span class="page-link" th:if='${page==allPages && !(keyword==null)}'>&raquo;</span>
-							</li>
-						</ul>
-			    	 </nav>
-			     </div>
+									<!-- 現在のページが最終ページから3ページ以内の場合 -->
+									<th:block th:if="${allPages-3 lt page}">
+										<li class="page-item">
+											<a class="page-link">
+												<span th:text="...">...</span>
+											</a>
+										</li>
+										<li th:class="(${i}==${page})? 'page-item active' : 'page-item'" th:each="i : ${#numbers.sequence(page-3, allPages)}">
+											<!-- 現在表示しているページはspan -->
+											<th:block th:if="${i}==${page}">
+												<span class="page-link" th:text="${i}">1
+													<span class="sr-only">(current)</span>
+												</span>
+											</th:block>
+											<!-- 現在表示している以外のページはリンクを表示 -->
+											<!-- keywordなしの場合は全件取得ページリンク -->
+											<th:block th:if="${!(i==page) && keyword==null}">
+												<a class="page-link" th:href="@{/book(user=${user}, page=${i})}">
+													<span th:text="${i}">1</span>
+												</a>
+											</th:block>
+											<!-- keywordありの場合は検索結果へのページリンク -->
+											<th:block th:if="${!(i==page) && !(keyword==null)}">
+												<a class="page-link"  th:href="@{/book/search(user=${user}, keyword=${keyword}, page=${i})}">
+													<span th:text="${i}">1</span>
+												</a>
+											</th:block>
+										</li>
+									</th:block>
+									
+									<!-- 現在のページが前後3ページ以外の場合 -->
+									<th:block th:if="${3 lt page && page le allPages-3}" >
+										<li class="page-item">
+											<a class="page-link">
+												<span th:text="...">...</span>
+											</a>
+										</li>
+										<li th:class="(${i}==${page})? 'page-item active' : 'page-item'" th:each="i : ${#numbers.sequence(page-3, page+3)}">
+											<!-- 現在表示しているページはspan -->
+											<th:block th:if="${i}==${page}">
+												<span class="page-link" th:text="${i}">1
+													<span class="sr-only">(current)</span>
+												</span>
+											</th:block>
+											<!-- 現在表示している以外のページはリンクを表示 -->
+											<!-- keywordなしの場合は全件取得ページリンク -->
+											<th:block th:if="${!(i==page) && keyword==null}">
+												<a class="page-link"  th:href="@{/book(user=${user}, page=${i})}">
+													<span th:text="${i}">1</span>
+												</a>
+											</th:block>
+											<!-- keywordありの場合は検索結果へのページリンク -->
+											<th:block th:if="${!(i==page) && !(keyword==null)}">
+												<a class="page-link" th:href="@{/book/search(user=${user}, keyword=${keyword}, page=${i})}">
+														<span th:text="${i}">1</span>
+												</a>
+											</th:block>
+										</li>
+										<li class="page-item">
+											<a class="page-link">
+												<span th:text="...">...</span>
+											</a>
+										</li>
+									</th:block>
+								</th:block>
+										
+								<!-- 最終ページへのリンク -->
+								<li class="page-item">
+									<!-- keywordなしの場合は全件取得ページリンク -->
+									<th:block th:if="${!(page==allPages) && keyword==null}">
+										<a class="page-link" th:href="@{/book(user=${user}, page=${allPages})}">&raquo;</a>
+									</th:block>
+									<th:block th:if="${page==allPages && keyword==null}">
+										<span class="page-link">&raquo;</span>
+									</th:block>
+									<!-- keywordありの場合は検索結果へのページリンク -->
+									<th:block th:if="${!(page==allPages) && !(keyword==null)}">
+										<a class="page-link" th:href="@{/book/search(user=${user}, keyword=${keyword}, page=${allPages})}">&raquo;</a>
+									</th:block>
+									<th:block th:if="${page==allPages && !(keyword==null)}">
+										<span class="page-link">&raquo;</span>
+									</th:block>
+								</li>
+							</ul>
+				    	 </nav>
+				     </div>
+				 </th:block>
 		     </div>
 		 </div>
 	 </th:block>

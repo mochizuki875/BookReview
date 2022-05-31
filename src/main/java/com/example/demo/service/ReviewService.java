@@ -7,17 +7,17 @@ import com.example.demo.entity.Review;
 public interface ReviewService {
 
 	// RVのIDを指定してRVを1件取得
-	Optional<Review> selectOneById(Integer id);
+	Optional<Review> selectOneById(int id);
 	
 	// RVのIDを指定してRVを1件削除
-	void deleteOneById(Integer id);
+	void deleteOneById(int id);
 
 	// RVを1件登録
 	void insertOne(Review review);
 	
 	// 本のIDを指定してRVを全件取得
-	 Iterable<Review> selectAllByBookId(Integer bookid);
+	 Iterable<Review> selectAllByBookId(int bookid);
 			
 	// 本のIDを指定してRVを全件削除（本のIDに紐付くもの全て）
-	 void deleteAllByBookId(Integer bookid);
+	 void deleteAllByBookId(int bookid);
 }

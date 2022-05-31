@@ -9,20 +9,20 @@ import org.springframework.data.relational.core.mapping.Table;
 public class Review {
 	@Id
 	@Column("id")
-	private Integer id; // 主キー
+	private int id; // 主キー
 	@Column("evaluation")
-	private Integer evaluation; // 本の評価（1~5）
+	private int evaluation; // 本の評価（1~5）
 	@Column("content")
 	private String content; // 本のレビュー内容
 	@Column("bookid")
-	private Integer bookid; // 本のID
+	private int bookid; // 本のID
 	@Column("userid")
-	private Integer userid; // ユーザーID
+	private int userid; // ユーザーID
 	
 	public Review() {
 	}
 	
-	public Review(Integer id, Integer evaluation, String content, Integer bookid, Integer userid) {
+	public Review(int id, int evaluation, String content, int bookid, int userid) {
 		this.id = id;
 		this.evaluation = evaluation;
 		this.content = content;
@@ -30,19 +30,19 @@ public class Review {
 		this.userid = userid;
 	}
 	
-	public Integer getId() {
+	public int getId() {
 		return id;
 	}
 	
-	public void setId(Integer id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 	
-	public Integer getEvaluation() {
+	public int getEvaluation() {
 		return evaluation;
 	}
 	
-	public void setEvaluation(Integer evaluation) {
+	public void setEvaluation(int evaluation) {
 		this.evaluation = evaluation;
 	}
 	
@@ -54,19 +54,19 @@ public class Review {
 		this.content = content;
 	}
 	
-	public Integer getBookid() {
+	public int getBookid() {
 		return bookid;
 	}
 	
-	public void setBookid(Integer bookid) {
+	public void setBookid(int bookid) {
 		this.bookid = bookid;
 	}
 	
-	public Integer getUserid() {
+	public int getUserid() {
 		return userid;
 	}
 	
-	public void setUserid(Integer userid) {
+	public void setUserid(int userid) {
 		this.userid = userid;
 	}
 	
