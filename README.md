@@ -22,7 +22,6 @@ Access `http://127.0.0.1:8080`.
 
 ## Configuration
 
-
 |Name                        |Description                                                                                   |Value|
 |:---                        |:---                                                                                          |:---|
 |`buildEnv`                  |If you set `prod`, using database(`PostgreSQL 14.x`) as application datastore.(Default: `dev`)|`dev`/`prod`|
@@ -43,3 +42,9 @@ or
 # java -jar build/libs/BookReview-0.0.1-SNAPSHOT.jar
 ```
 
+## Docker
+
+```
+# docker build -t bookreview:1.0 .
+# docker run -d -p 8080:8080 --name bookreview bookreview:1.0
+```
