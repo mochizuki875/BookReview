@@ -27,8 +27,8 @@ Access `http://127.0.0.1:8080`.
 |:---                        |:---                                                                                          |:---|
 |`buildEnv`                  |If you set `prod`, using database(`PostgreSQL 14.x`) as application datastore.(Default: `dev`)|`dev`/`prod`|
 |`SPRING_DATASOURCE_URL`     |Set database URL.(Default: `jdbc:postgresql://localhost:5432/bookreview`)                     |`jdbc:postgresql://<Host Name>:<Port>/bookreview`|
-|`SPRING_DATASOURCE_USERNAME`|Set database user name.(Default: `postgres`)                                                  |<USERNAME>|
-|`SPRING_DATASOURCE_PASSWORD`|Set database user password.(Default: `postgres`)                                              |<PASSWORD>|
+|`SPRING_DATASOURCE_USERNAME`|Set database user name.(Default: `postgres`)                                                  |`<USERNAME>`|
+|`SPRING_DATASOURCE_PASSWORD`|Set database user password.(Default: `postgres`)                                              |`<PASSWORD>`|
 
 ## Run
 
