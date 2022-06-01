@@ -31,7 +31,7 @@ You can access H2 Console `http://127.0.0.1:8080/h2-console/` with below params.
 |Driver Class |`org.h2.Driver`         |
 |JDBC URL     |`jdbc:h2:mem:bookreview`|
 |User Name    |`sa`                    |
-|Password     |``                      |
+|Password     |                        |
 
 
 ## Configuration
