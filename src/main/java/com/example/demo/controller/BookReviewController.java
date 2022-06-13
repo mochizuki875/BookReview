@@ -232,7 +232,7 @@ public class BookReviewController {
 	
 	// 本の削除
 	@PostMapping("/book/{bookid}/delete")
-	public String deleteReview(@RequestParam(value="user", required=false) String user, @PathVariable int bookid, RedirectAttributes redirectAttributes, Model model) {
+	public String deleteBook(@RequestParam(value="user", required=false) String user, @PathVariable int bookid, RedirectAttributes redirectAttributes, Model model) {
 		logger.log(Level.INFO, "DELETE /book/" + bookid + "/delete");
 		logger.log(Level.INFO, "user: " + user);
 		
