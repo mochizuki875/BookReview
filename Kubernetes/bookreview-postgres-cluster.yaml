@@ -1,0 +1,62 @@
+apiVersion: postgres-operator.crunchydata.com/v1beta1
+kind: PostgresCluster
+metadata:
+  name: bookreview-postgres-cluster
+spec:
+  image: registry.developers.crunchydata.com/crunchydata/crunchy-postgres:ubi8-14.2-1
+  postgresVersion: 14
+  instances:
+    - name: instance1
+      dataVolumeClaimSpec:
+        accessModes:
+        - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: 1Gi
+        storageClassName: openebs-hostpath
+      replicas: 2
+  users:
+    - name: postgres
+    - name: bookreview
+      databases:
+        - bookreview
+      options: "SUPERUSER"
+  backups:
+    pgbackrest:
+      image: registry.developers.crunchydata.com/crunchydata/crunchy-pgbackrest:ubi8-2.38-0
+      repos:
+      - name: repo1
+        volume:
+          volumeClaimSpec:
+            accessModes:
+            - "ReadWriteOnce"
+            resources:
+              requests:
+                storage: 1Gi
+            storageClassName: openebs-hostpath
+  userInterface:
+    pgAdmin:
+      image: registry.developers.crunchydata.com/crunchydata/crunchy-pgadmin4:ubi8-4.30-0
+      dataVolumeClaimSpec:
+        accessModes:
+        - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: 1Gi
+        storageClassName: openebs-hostpath
+      service:
+        type: LoadBalancer
+  patroni:
+    dynamicConfiguration:
+      postgresql:
+        parameters:
+          logging_collector: "false" # ファイル出力せずstderrに出力する
+          log_line_prefix: '[%t]%u %d %p[%l]'
+          log_destination: 'stderr' # ログ出力先
+          log_statement: 'all' # mod: ddl文＋更新系
+          log_connections: 'on'
+          log_disconnections: 'on'
+  monitoring:
+    pgmonitor:
+      exporter:
+        image: registry.developers.crunchydata.com/crunchydata/crunchy-postgres-exporter:ubi8-5.1.0-0

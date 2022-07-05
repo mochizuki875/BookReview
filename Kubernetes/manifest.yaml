@@ -1,0 +1,106 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: bookreview
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: bookreview
+  name: bookreview
+  namespace: bookreview
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bookreview
+  template:
+    metadata:
+      labels:
+        app: bookreview
+    spec:
+      containers:
+      - image: ghcr.io/mochizuki875/bookreview:v1.0
+        name: bookreview
+        imagePullPolicy: Always
+        env:
+        - name: buildEnv
+          value: prod
+        - name: SERVER_PORT
+          value: "8080"
+        - name: JAVA_TOOL_OPTIONS
+          value: "-javaagent:otel.jar"
+        - name: SPRING_DATASOURCE_URL
+          value: jdbc:postgresql://bookreview-postgres-cluster-primary.default.svc:5432/bookreview
+        - name: SPRING_DATASOURCE_USERNAME
+          value: bookreview
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: bookreview
+        - name: OTEL_SERVICE_NAME
+          value: BookReview
+        - name: OTEL_TRACES_EXPORTER
+          value: otlp
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: http://grafana-agent-traces.monitoring.svc:4317
+        - name: OTEL_RESOURCE_ATTRIBUTES_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        - name: OTEL_RESOURCE_ATTRIBUTES_POD_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+        - name: OTEL_RESOURCE_ATTRIBUTES_POD_UID
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.uid
+        - name: OTEL_RESOURCE_ATTRIBUTES_POD_IP
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.podIP
+        - name: OTEL_RESOURCE_ATTRIBUTES_NODE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: spec.nodeName
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: "k8s.namespace.name=$(OTEL_RESOURCE_ATTRIBUTES_NAMESPACE), k8s.pod.name=$(OTEL_RESOURCE_ATTRIBUTES_POD_NAME), k8s.pod.uid=$(OTEL_RESOURCE_ATTRIBUTES_POD_UID), k8s.pod.ip=$(OTEL_RESOURCE_ATTRIBUTES_POD_IP), k8s.node.name=$(OTEL_RESOURCE_ATTRIBUTES_NODE_NAME)"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: bookreview
+  name: bookreview
+  namespace: bookreview
+spec:
+  selector:
+    app: bookreview
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: bookreview-ingress
+  namespace: bookreview
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: bookreview.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: bookreview
+            port:
+              number: 8080
