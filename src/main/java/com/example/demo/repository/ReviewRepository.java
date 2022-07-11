@@ -10,13 +10,16 @@ import com.example.demo.entity.Review;
 //CrudRepositoryの拡張インターフェースとしてRepositoryを作成
 public interface ReviewRepository extends CrudRepository<Review, Integer> {
 	// 独自で使用したいメソッドを定義
-	// 本のIDを指定してRVを全件取得
+	// bookidを指定してReviewを全件取得
 	@Query("SELECT * FROM review WHERE bookid= :bookid;")
 	Iterable<Review> findAllByBookid(@Param("bookid") int bookid);
 	
-	// 本のIDを指定してRVを全件削除
-	// DML系クエリを実行する際は@Modifyingが必要
+	// bookidを指定してReviewを全件削除
 	@Modifying
 	@Query("DELETE FROM review WHERE bookid= :bookid;")
 	void deleteAllByBookid(@Param("bookid") int bookid);
+	
+	// bookidを指定してTotalEvaluationを取得
+	@Query("SELECT ROUND(AVG(evaluation),1) AS totalevaluation FROM review WHERE bookid = :bookid GROUP BY bookid;")
+	double findTotalEvaluationByBookId(@Param("bookid") int bookid);
 }

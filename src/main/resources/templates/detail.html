@@ -26,6 +26,18 @@
 		</form>
 	</div>
 	
+	<div class="container-fluid pt-3">
+		<div class="row">
+			<!-- 登録/更新完了コメント -->
+			<!-- ${complete}は各メソッドからRedirectパラメーターとして渡される -->
+			<th:block th:if="${complete}">
+				<p  th:text="${complete}" style="color:blue"></p>
+			</th:block>
+			<!-- 表示する書籍の件数を表示（未実装） -->
+			<!-- <p th:if="${bookListSize}" th:text="${bookListSize} + '件の書籍が見つかりました。'"></p> -->
+		</div>
+	</div>
+	
 	<!-- 本の詳細表示 -->
 	<div class="container-fluid pt-3">	
 		<table class="table table-bordered table-responsive">
@@ -52,11 +64,6 @@
 	
 	<div class="container-fluid pt-5">
 		<h2 align="center">この本を読んだ人からのレビュー</h2>
-		
-		<!-- 登録完了コメント -->
-		<th:block th:if="${complete}">
-			<p th:text="${complete}" style="color:blue"></p>
-		</th:block>
 		<!-- RV登録ボタン -->
 		<form class="row" method="GET" th:action="@{/book/{bookid}/newreview(bookid=${book.id})}"> <!-- {bookid}に(bookid=)を代入 -->
 			<div class="d-grid gap-2 d-md-flex justify-content-md-end">

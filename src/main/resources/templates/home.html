@@ -86,7 +86,7 @@
 						</td>
 						<!-- 詳細ボタン -->
 						<td class="text-center">
-							<form method="GET" th:action="@{/book/{bookid}/detail(bookid=${obj.id})}"> <!-- {bookid}に(bookid=)を代入 -->
+							<form method="GET" th:action="@{/book/{bookid}(bookid=${obj.id})}"> <!-- {bookid}に(bookid=)を代入 -->
 								<input type="hidden" name="user" th:value="${user}"> <!-- 隠しフィールドとしてuserを設定しリクエストパラメータとして送信 -->
 								<button type="submit" class="btn btn-primary">詳細</button>
 							</form>
@@ -100,7 +100,7 @@
 						</td>
 						<!-- 削除ボタン -->
 						<td th:if="${user} == 'admin'" align="center">
-							<form method="POST" th:action="@{/book/{bookid}/delete(bookid=${obj.id})}"> <!-- {bookid}に(bookid=)を代入 -->
+							<form method="POST" th:action="@{/book/{bookid}(bookid=${obj.id})}"> <!-- {bookid}に(bookid=)を代入 -->
 								<input type="hidden" name="_method" value="DELETE"> <!-- DELETEメソッドを隠しフィールドで送信 -->
 								<input type="hidden" name="user" th:value="${user}"> <!-- 隠しフィールドとしてuserを設定しリクエストパラメータとして送信 -->
 								<button type="submit" class="btn btn-secondary">削除</button>

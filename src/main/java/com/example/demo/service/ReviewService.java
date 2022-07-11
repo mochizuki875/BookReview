@@ -13,11 +13,14 @@ public interface ReviewService {
 	void deleteOneById(int id);
 
 	// RVを1件登録
-	void insertOne(Review review);
+	Review insertOne(Review review);
 	
 	// 本のIDを指定してRVを全件取得
-	 Iterable<Review> selectAllByBookId(int bookid);
+	Iterable<Review> selectAllByBookId(int bookid);
 			
 	// 本のIDを指定してRVを全件削除（本のIDに紐付くもの全て）
-	 void deleteAllByBookId(int bookid);
+	void deleteAllByBookId(int bookid);
+	 
+	// 指定したbookidのTotalEvaluationを取得
+	double selectTotalEvaluationByBookId(int bookid);
 }

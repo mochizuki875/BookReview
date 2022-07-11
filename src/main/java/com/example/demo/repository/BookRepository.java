@@ -22,12 +22,12 @@ public interface BookRepository extends CrudRepository<Book, Integer> {
 	int countAll();
 
 	// totalevaluationが高い順にBookをoffset付きでlimit件取得
-	@Query("SELECT * FROM (SELECT * FROM book ORDER BY totalevaluation DESC, id ASC) selectAllDesc LIMIT :limit OFFSET :offset;")
+	@Query("SELECT * FROM book ORDER BY totalevaluation DESC, id ASC LIMIT :limit OFFSET :offset;")
 	Iterable<Book> selectAllDescByLimitOffset(@Param("limit") int limit, @Param("offset") int offset);
-
+	
 	// keywordでBook titleを検索しtotalevaluationが高い順にBookをoffset付きでlimit件取得
-	@Query("SELECT * FROM (SELECT * FROM book WHERE title ILIKE '%' || :keyword || '%' ORDER BY totalevaluation DESC, id ASC) selectAllDesc LIMIT :limit OFFSET :offset;")
-	Iterable<Book> searchAllDescByLimitOffset(@Param("keyword") String keyword, @Param("limit") int limit, @Param("offset") int offset);	
+	@Query("SELECT * FROM book WHERE title ILIKE '%' || :keyword || '%' ORDER BY totalevaluation DESC, id ASC LIMIT :limit OFFSET :offset;")
+	Iterable<Book> searchAllDescByLimitOffset(@Param("keyword") String keyword, @Param("limit") int limit, @Param("offset") int offset);
 	
 	// keword検索にヒットしたBook件数を取得
 	@Query("SELECT COUNT(*) FROM book WHERE title ILIKE '%' || :keyword || '%';")
