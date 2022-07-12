@@ -22,7 +22,7 @@ public class ReviewServiceImpl implements ReviewService {
 	Logger logger = Logger.getLogger(ReviewServiceImpl.class.getName());
 	ConsoleHandler handler = new ConsoleHandler();
 	
-	// RVのIDを指定してRVを1件取得
+	// reviewidを指定してReviewを1件取得
 	@Override
 	public Optional<Review> selectOneById(int id){
 		logger.log(Level.FINER, "selectOneById(" + id + ")");
@@ -30,7 +30,7 @@ public class ReviewServiceImpl implements ReviewService {
 		return reviewRepository.findById(id);
 	}
 	
-	// RVのIDを指定してRVを1件削除
+	// reviewidを指定してReviewを1件削除
 	@Override
 	public void deleteOneById(int id) {
 		logger.log(Level.FINER, "deleteOneById(" + id + ")");
@@ -38,7 +38,7 @@ public class ReviewServiceImpl implements ReviewService {
 		reviewRepository.deleteById(id);
 	}
 	
-	// RVを1件登録
+	// Reviewを1件登録
 	@Override
 	public Review insertOne(Review review) {
 		logger.log(Level.FINER, "insertOne(" + review + ")");
@@ -46,7 +46,7 @@ public class ReviewServiceImpl implements ReviewService {
 		return reviewRepository.save(review);
 	}
 	
-	// 本のIDを指定してRVを全件取得
+	// bookidを指定してReviewを全件取得
 	@Override
 	public Iterable<Review> selectAllByBookId(int bookid){
 		logger.log(Level.FINER, "selectAllByBookId(" + bookid + ")");
@@ -54,7 +54,7 @@ public class ReviewServiceImpl implements ReviewService {
 	    return reviewRepository.findAllByBookid(bookid);
 	}
 	
-	// 本のIDを指定してRVを全件削除（本のIDに紐付くもの全て）
+	// bookidを指定してReviewを全件削除（bookidに紐付くもの全て）
 	@Override
 	public void deleteAllByBookId(int bookid) {
 		logger.log(Level.FINER, "deleteAllByBookId(" + bookid + ")");
@@ -62,7 +62,7 @@ public class ReviewServiceImpl implements ReviewService {
 		reviewRepository.deleteAllByBookid(bookid);
 	}
 	
-	// 指定したbookidのTotalEvaluationを取得
+	// 指定したbookidのtotalevaluationを取得
 	public double selectTotalEvaluationByBookId(int bookid) {
 		logger.log(Level.FINER, "selectTotalEvaluationByBookId(" + bookid + ")");
 		logger.log(Level.FINER, "reviewRepository.findTotalEvaluationByBookId(" + bookid + ")");

@@ -51,20 +51,23 @@
 			</div>
 		</div>
 	</div>
-
-	<!-- ▽▽▽ 書籍情報が1件でもあれば表示 ▽▽▽ -->	
-	<th:block th:unless="${#lists.isEmpty(bookList)}">
-		<!-- BookReviewControllerにてModelに格納したlistをユーティリティーオブジェクトを使ってチェックしている -->
-		<div class="container-fluid pt-3">
+	
+	<div class="container-fluid pt-3">
 			<div class="row">
 				<!-- 登録/更新完了コメント -->
-				<!-- ${complete}はinsertメソッドからRedirectパラメーターとして渡される -->
+				<!-- ${complete}は各メソッドからRedirectパラメーターとして渡される -->
 				<th:block th:if="${complete}">
 					<p  th:text="${complete}" style="color:blue"></p>
 				</th:block>
 				<!-- 表示する書籍の件数を表示（未実装） -->
 				<!-- <p th:if="${bookListSize}" th:text="${bookListSize} + '件の書籍が見つかりました。'"></p> -->
 			</div>
+	</div>
+
+	<!-- ▽▽▽ 書籍情報が1件でもあれば表示 ▽▽▽ -->	
+	<th:block th:unless="${#lists.isEmpty(bookList)}">
+		<!-- BookReviewControllerにてModelに格納したlistをユーティリティーオブジェクトを使ってチェックしている -->
+		<div class="container-fluid pt-3">
 			<!-- 書籍情報を一覧で表示 -->
 			<table class="table table-bordered table-striped table-hover table-responsive">
 				<thead>
@@ -290,7 +293,7 @@
 	<th:block th:if="${#lists.isEmpty(bookList)}">
 		<div class="container-fluid">
 			<div class="row">
-				<p>登録されている書籍はありません</p>
+				<p>登録されている本はありません</p>
 			</div>
 		</div>
 	</th:block>

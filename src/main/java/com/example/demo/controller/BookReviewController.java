@@ -285,7 +285,7 @@ public class BookReviewController {
 	
 	// Book新規登録
 	@PostMapping("/book/insert")
-	public String insert(@RequestParam(value="user", required=false) String user, @RequestParam String title, @RequestParam String overview, RedirectAttributes redirectAttributes, Model model) {
+	public String insertBook(@RequestParam(value="user", required=false) String user, @RequestParam String title, @RequestParam String overview, RedirectAttributes redirectAttributes, Model model) {
 		try { 
 			logger.log(Level.INFO, "POST /book/insert");
 			logger.log(Level.INFO, " user: " + user);
@@ -321,7 +321,7 @@ public class BookReviewController {
 	
 	// Book更新
 	@PostMapping("/book/{bookid}/update")
-	public String update(@RequestParam(value="user", required=false) String user, @RequestParam String title, @RequestParam String overview, @PathVariable(value="bookid", required=true) int bookid, RedirectAttributes redirectAttributes, Model model) {
+	public String updateBook(@RequestParam(value="user", required=false) String user, @RequestParam String title, @RequestParam String overview, @PathVariable(value="bookid", required=true) int bookid, RedirectAttributes redirectAttributes, Model model) {
 		try {
 			logger.log(Level.INFO, "POST /book/" + bookid + "/update");
 			logger.log(Level.INFO, " user: " + user);
@@ -375,8 +375,8 @@ public class BookReviewController {
 			
 			redirectAttributes.addFlashAttribute("complete", "対象の本の削除が完了しました。"); // リダイレクト時のパラメータを設定する（削除完了メッセージ）
 			
-			logger.log(Level.INFO, "redirect:/?user=" + user);
-			return "Redirect to /" + "?user=" + user;
+			logger.log(Level.INFO, "Redirect to /" + "?user=" + user);
+			return "redirect:/?user=" + user;
 		}
 		catch (Exception e) {
 			logger.log(Level.SEVERE, "Internal Server Error");

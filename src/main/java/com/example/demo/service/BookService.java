@@ -10,11 +10,11 @@ public interface BookService {
 	// Book全件取得
 	Iterable<Book> selectAll();
 	
-	// 上位n件のbookを取得
+	// 上位n件のBookを取得
 	Iterable<Book> selectTopN(int n);
 	
-	// Bookをoffset単位で分割表示する際のページ数を取得
-	int countAllPages(int offset);
+	// Bookをlimit単位で分割表示する際のページ数を取得
+	int countAllPages(int limit);
 	
 	// 登録されている全Bookをlimit単位でページ分割し指定したpageに含まれるBook一覧を取得
 	Iterable<Book> selectAllDescByPage(int page, int limit);
@@ -23,11 +23,10 @@ public interface BookService {
 	Optional<Book> selectOneById(int id);
 	
 	// 登録されている全Bookをkeywordで検索した結果をlimit単位でページ分割し指定したpageに含まれるBook一覧を取得
-	// Iterable<Book> searchAll(String keyword);
 	Iterable<Book> searchAllDescByPage(String keyword, int page, int limit);
 	
-	// // Bookのkeyword検索結果をoffset単位で分割表示する際のページ数を取得
-	int countSearchAllPages(String keyword, int offset);
+	// Bookのkeyword検索結果をlimit単位で分割表示する際のページ数を取得
+	int countSearchAllPages(String keyword, int limit);
 	
 	// Bookを1件登録して登録されたBookを返す
 	Book insertOne(Book book);
