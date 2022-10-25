@@ -24,6 +24,10 @@ spec:
       - image: ghcr.io/mochizuki875/bookreview:v1.0
         name: bookreview
         imagePullPolicy: Always
+        resources:
+          limits:
+            memory: "1Gi"
+            cpu: "1"
         env:
         - name: buildEnv
           value: prod
@@ -32,7 +36,8 @@ spec:
         - name: JAVA_TOOL_OPTIONS
           value: "-javaagent:otel.jar"
         - name: SPRING_DATASOURCE_URL
-          value: jdbc:postgresql://bookreview-postgres-cluster-primary.default.svc:5432/bookreview
+          value: jdbc:postgresql://postgres.default.svc:5432/bookreview
+          # value: jdbc:postgresql://bookreview-postgres-cluster-primary.default.svc:5432/bookreview
         - name: SPRING_DATASOURCE_USERNAME
           value: bookreview
         - name: SPRING_DATASOURCE_PASSWORD
@@ -42,7 +47,8 @@ spec:
         - name: OTEL_TRACES_EXPORTER
           value: otlp
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
-          value: http://grafana-agent-traces.monitoring.svc:4317
+          value: http://opentelemetry-collector.monitoring.svc:4317
+          # value: http://grafana-agent-traces.monitoring.svc:4317
         - name: OTEL_RESOURCE_ATTRIBUTES_NAMESPACE
           valueFrom:
             fieldRef:
