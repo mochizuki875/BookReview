@@ -17,11 +17,13 @@ spec:
       app: bookreview
   template:
     metadata:
+      annotations:
+        instrumentation.opentelemetry.io/inject-java: "true"
       labels:
         app: bookreview
     spec:
       containers:
-      - image: ghcr.io/mochizuki875/bookreview:v1.0
+      - image: ghcr.io/mochizuki875/bookreview:jdk17.0.5 
         name: bookreview
         imagePullPolicy: Always
         resources:
@@ -34,10 +36,9 @@ spec:
         - name: SERVER_PORT
           value: "8080"
         - name: JAVA_TOOL_OPTIONS
-          value: "-javaagent:otel.jar"
+          value: "-verbose:gc -XX:+PrintCommandLineFlags"
         - name: SPRING_DATASOURCE_URL
           value: jdbc:postgresql://postgres.default.svc:5432/bookreview
-          # value: jdbc:postgresql://bookreview-postgres-cluster-primary.default.svc:5432/bookreview
         - name: SPRING_DATASOURCE_USERNAME
           value: bookreview
         - name: SPRING_DATASOURCE_PASSWORD
@@ -46,36 +47,10 @@ spec:
           value: BookReview
         - name: OTEL_TRACES_EXPORTER
           value: otlp
-        - name: OTEL_EXPORTER_OTLP_ENDPOINT
-          value: http://opentelemetry-collector.monitoring.svc:4317
-          # value: http://grafana-agent-traces.monitoring.svc:4317
-        - name: OTEL_RESOURCE_ATTRIBUTES_NAMESPACE
-          valueFrom:
-            fieldRef:
-              apiVersion: v1
-              fieldPath: metadata.namespace
-        - name: OTEL_RESOURCE_ATTRIBUTES_POD_NAME
-          valueFrom:
-            fieldRef:
-              apiVersion: v1
-              fieldPath: metadata.name
-        - name: OTEL_RESOURCE_ATTRIBUTES_POD_UID
-          valueFrom:
-            fieldRef:
-              apiVersion: v1
-              fieldPath: metadata.uid
-        - name: OTEL_RESOURCE_ATTRIBUTES_POD_IP
-          valueFrom:
-            fieldRef:
-              apiVersion: v1
-              fieldPath: status.podIP
-        - name: OTEL_RESOURCE_ATTRIBUTES_NODE_NAME
-          valueFrom:
-            fieldRef:
-              apiVersion: v1
-              fieldPath: spec.nodeName
-        - name: OTEL_RESOURCE_ATTRIBUTES
-          value: "k8s.namespace.name=$(OTEL_RESOURCE_ATTRIBUTES_NAMESPACE), k8s.pod.name=$(OTEL_RESOURCE_ATTRIBUTES_POD_NAME), k8s.pod.uid=$(OTEL_RESOURCE_ATTRIBUTES_POD_UID), k8s.pod.ip=$(OTEL_RESOURCE_ATTRIBUTES_POD_IP), k8s.node.name=$(OTEL_RESOURCE_ATTRIBUTES_NODE_NAME)"
+        - name: OTEL_METRICS_EXPORTER
+          value: none
+        # - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        #   value: http://opentelemetry-collector.monitoring.svc:4317
 ---
 apiVersion: v1
 kind: Service
