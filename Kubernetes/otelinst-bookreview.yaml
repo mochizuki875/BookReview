@@ -1,0 +1,12 @@
+apiVersion: opentelemetry.io/v1alpha1
+kind: Instrumentation
+metadata:
+  name: instrumentation-bookreview
+  namespace: bookreview
+spec:
+  exporter:
+    endpoint: http://opentelemetry-collector.monitoring.svc:4317
+  propagators:
+    - tracecontext
+    - baggage
+    - b3
